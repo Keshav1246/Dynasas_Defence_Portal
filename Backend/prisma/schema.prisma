@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Media {
+  id           Int       @id @default(autoincrement())
+  fileName     String
+  originalName String
+  fileUrl      String
+  fileType     String
+  size         Int
+  isDeleted    Boolean   @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+}
+
+enum PartnerStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Partner {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String?
+  logo        String?
+  website     String?
+  category    String?
+  status      PartnerStatus @default(ACTIVE)
+  isDeleted   Boolean       @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  CLOSED
+}
+
+model Inquiry {
+  id           Int           @id @default(autoincrement())
+  fullName     String
+  email        String
+  phone        String?
+  organization String?
+  subject      String
+  message      String
+  status       InquiryStatus @default(NEW)
+  assignedTo   String?
+  isDeleted    Boolean       @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model CompanyProfile {
+  id           String @id @default(uuid())
+  companyName  String
+  overview     String
+  mission      String
+  vision       String
+  contactEmail String
+  phone        String
+  address      String
+}
+
+model HomepageContent {
+  id           String @id @default(uuid())
+  heroTitle    String
+  heroSubtitle String
+  ctaText      String
+  ctaLink      String
+  heroImage    String
+}
+
+model FooterContent {
+  id      String @id @default(uuid())
+  address String
+  phone   String
+  email   String
+}
+
+model Service {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  image        String?
+  status       String   @default("published")
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
