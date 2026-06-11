@@ -1,7 +1,7 @@
 const prisma = require("../config/db");
 const AppError = require("../utils/AppError");
 const logger = require("../config/logger");
-
+const activityLogService = require("../services/ActivityLogService");
 const getAllServices = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1);
@@ -71,6 +71,12 @@ const createService = async (req, res, next) => {
       message: "Service Created Successfully",
       data: service,
     });
+
+    activityLogService.logActivity({
+      action: `Created service: ${service.title}`,
+      entityType: "Service",
+      entityId: service.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -91,6 +97,12 @@ const updateService = async (req, res, next) => {
       message: "Service Updated Successfully",
       data: service,
     });
+
+    activityLogService.logActivity({
+      action: `Updated service: ${service.title}`,
+      entityType: "Service",
+      entityId: service.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -101,13 +113,19 @@ const deleteService = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.service.delete({
+    const deletedService = await prisma.service.delete({
       where: { id },
     });
 
     res.status(200).json({
       success: true,
       message: "Service Deleted Successfully",
+    });
+
+    activityLogService.logActivity({
+      action: `Deleted service: ${deletedService.title}`,
+      entityType: "Service",
+      entityId: id,
     });
   } catch (error) {
     logger.error(error.message);

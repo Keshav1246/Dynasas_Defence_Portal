@@ -12,7 +12,7 @@ const createServiceSchema = z.object({
   image: z.string().optional(),
 
   status: z
-    .enum(["published", "draft"])
+    .enum(["published", "draft", "archived"])
     .optional(),
 
   displayOrder: z

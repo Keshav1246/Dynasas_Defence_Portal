@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const logger = require("../config/logger");
+const activityLogService = require("../services/ActivityLogService");
 
 const getHomepageContent = async (req, res, next) => {
   try {
@@ -28,6 +29,12 @@ const createHomepageContent = async (req, res, next) => {
       message: "Homepage Content Created",
       data: homepageContent,
     });
+
+    activityLogService.logActivity({
+      action: `Created homepage content: Homepage`,
+      entityType: "HomepageContent",
+      entityId: homepageContent.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -48,6 +55,12 @@ const updateHomepageContent = async (req, res, next) => {
       success: true,
       message: "Homepage Content Updated",
       data: homepageContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Updated homepage content: Homepage`,
+      entityType: "HomepageContent",
+      entityId: homepageContent.id,
     });
   } catch (error) {
     logger.error(error.message);
@@ -82,6 +95,12 @@ const createFooterContent = async (req, res, next) => {
       message: "Footer Content Created",
       data: footerContent,
     });
+
+    activityLogService.logActivity({
+      action: `Created footer content: Footer`,
+      entityType: "FooterContent",
+      entityId: footerContent.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -102,6 +121,12 @@ const updateFooterContent = async (req, res, next) => {
       success: true,
       message: "Footer Content Updated",
       data: footerContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Updated footer content: Footer`,
+      entityType: "FooterContent",
+      entityId: footerContent.id,
     });
   } catch (error) {
     logger.error(error.message);

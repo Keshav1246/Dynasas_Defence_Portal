@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const logger = require("../config/logger");
+const activityLogService = require("../services/ActivityLogService");
 
 const getCompanyProfile = async (req, res, next) => {
   try {
@@ -26,6 +27,12 @@ const createCompanyProfile = async (req, res, next) => {
       message: "Company Profile Created",
       data: companyProfile,
     });
+
+    activityLogService.logActivity({
+      action: `Created company profile: ${companyProfile.companyName}`,
+      entityType: "CompanyProfile",
+      entityId: companyProfile.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -45,6 +52,12 @@ const updateCompanyProfile = async (req, res, next) => {
       success: true,
       message: "Company Profile Updated",
       data: companyProfile,
+    });
+
+    activityLogService.logActivity({
+      action: `Updated company profile: ${companyProfile.companyName}`,
+      entityType: "CompanyProfile",
+      entityId: companyProfile.id,
     });
   } catch (error) {
     logger.error(error.message);

@@ -1,6 +1,7 @@
 const inquiryService = require('../services/inquiryService');
 const apiResponse = require('../utils/apiResponse');
 const AppError = require('../utils/AppError');
+const activityLogService = require('../services/ActivityLogService');
 
 /**
  * Controller to handle Contact & Inquiry Management HTTP requests
@@ -119,6 +120,12 @@ class InquiryController {
 
       const updatedInquiry = await inquiryService.updateInquiryStatus(id, status);
       res.status(200).json(apiResponse.success(updatedInquiry, `Inquiry status changed to ${status} successfully`));
+
+      activityLogService.logActivity({
+        action: `Updated inquiry status to ${status}: ${updatedInquiry.subject}`,
+        entityType: "Inquiry",
+        entityId: updatedInquiry.id,
+      });
     } catch (error) {
       next(error);
     }
@@ -140,6 +147,12 @@ class InquiryController {
 
       const updatedInquiry = await inquiryService.assignInquiry(id, assignedTo);
       res.status(200).json(apiResponse.success(updatedInquiry, `Inquiry assigned to ${assignedTo} successfully`));
+
+      activityLogService.logActivity({
+        action: `Assigned inquiry to ${assignedTo}: ${updatedInquiry.subject}`,
+        entityType: "Inquiry",
+        entityId: updatedInquiry.id,
+      });
     } catch (error) {
       next(error);
     }
