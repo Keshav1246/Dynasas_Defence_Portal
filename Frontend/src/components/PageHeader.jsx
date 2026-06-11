@@ -20,9 +20,11 @@ const PageHeader = ({
       </div>
 
       {/* Right side: Date Badge */}
-      <div className="shrink-0">
-        <DateBadge date={date} icon={Clock} />
-      </div>
+      {date && (
+        <div className="shrink-0">
+          <DateBadge date={date} icon={Clock} />
+        </div>
+      )}
     </div>
   );
 };

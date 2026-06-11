@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Zap, LogOut } from 'lucide-react';
 import { sidebarConfig } from './sidebarConfig';
 
 const Sidebar = () => {
-    // State to manage active item for demonstration purposes
-    const [activeItem, setActiveItem] = useState('Company Profile');
+    const location = useLocation();
 
     return (
         <aside className="w-[240px] h-screen bg-[#111216] flex flex-col p-4">
@@ -32,13 +32,13 @@ const Sidebar = () => {
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {sidebarConfig.map((item) => {
-                    const isActive = activeItem === item.title;
+                    const isActive = location.pathname.startsWith(item.path);
                     const Icon = item.icon;
 
                     return (
-                        <button
+                        <Link
                             key={item.title}
-                            onClick={() => setActiveItem(item.title)}
+                            to={item.path}
                             className={`flex items-center gap-3 px-3 py-[9px] rounded-xl transition-all duration-200 w-full text-left
                 ${isActive
                                     ? 'bg-[#ff5a36]/[0.15] text-white border border-[#ff6b3d]/50 shadow-[0_0_12px_rgba(255,90,54,0.15)]'
@@ -60,7 +60,7 @@ const Sidebar = () => {
                                     {item.badge}
                                 </span>
                             )}
-                        </button>
+                        </Link>
                     );
                 })}
             </nav>

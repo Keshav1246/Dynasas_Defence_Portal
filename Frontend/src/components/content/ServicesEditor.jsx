@@ -1,0 +1,127 @@
+import React, { useState, useEffect } from 'react';
+import { Eye, GripVertical, Trash2, Plus } from 'lucide-react';
+
+const ServicesEditor = ({ data, onSave }) => {
+  const [formData, setFormData] = useState(data);
+
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleServiceChange = (id, text) => {
+    setFormData(prev => ({
+      ...prev,
+      servicesList: prev.servicesList.map(s => s.id === id ? { ...s, text } : s)
+    }));
+  };
+
+  const handleDeleteService = (id) => {
+    setFormData(prev => ({
+      ...prev,
+      servicesList: prev.servicesList.filter(s => s.id !== id)
+    }));
+  };
+
+  const handleAddService = () => {
+    setFormData(prev => {
+      const newId = prev.servicesList.length > 0 ? Math.max(...prev.servicesList.map(s => s.id)) + 1 : 1;
+      return {
+        ...prev,
+        servicesList: [...prev.servicesList, { id: newId, text: '' }]
+      };
+    });
+  };
+
+  return (
+    <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gray-100 gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">Services Section</h2>
+          <p className="text-sm text-gray-500 mt-1">Edit content for this homepage module</p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <button className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors">
+            <Eye className="w-4 h-4" />
+            Preview
+          </button>
+          <button 
+            onClick={() => onSave('services', formData)}
+            className="px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        <div>
+          <label className="block mb-2 text-[13px] font-semibold text-gray-900">Section Title</label>
+          <input 
+            type="text" 
+            name="sectionTitle"
+            value={formData.sectionTitle}
+            onChange={handleChange}
+            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all text-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 text-[13px] font-semibold text-gray-900">Section Description</label>
+          <textarea 
+            name="sectionDescription"
+            value={formData.sectionDescription}
+            onChange={handleChange}
+            rows={2}
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all text-[13px] text-gray-700 leading-relaxed"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">SERVICES (drag to reorder)</label>
+          <div className="space-y-3">
+            {formData.servicesList.map((service, index) => (
+              <div key={service.id} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 pr-3 shadow-[0_2px_8px_rgba(0,0,0,0.02)] group">
+                <button className="p-1.5 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing">
+                  <GripVertical className="w-4 h-4" />
+                </button>
+                <div className="w-6 h-6 rounded-md bg-[#FFF7F2] text-[#F97316] font-bold text-xs flex items-center justify-center shrink-0 border border-[#FDBA74]">
+                  {index + 1}
+                </div>
+                <input 
+                  type="text" 
+                  value={service.text}
+                  onChange={(e) => handleServiceChange(service.id, e.target.value)}
+                  className="w-full px-3 py-1.5 bg-transparent border-none focus:ring-0 outline-none transition-all text-[13px] font-medium text-gray-800"
+                />
+                <button 
+                  onClick={() => handleDeleteService(service.id)}
+                  className="p-1.5 text-gray-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 className="w-[18px] h-[18px]" />
+                </button>
+              </div>
+            ))}
+            
+            <button 
+              onClick={handleAddService}
+              className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl p-3 text-gray-400 hover:text-orange-500 hover:border-orange-200 hover:bg-orange-50/50 transition-all mt-4"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="font-medium text-[13px]">Add Service</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default ServicesEditor;
