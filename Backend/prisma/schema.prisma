@@ -60,6 +60,14 @@ model Inquiry {
   updatedAt    DateTime      @updatedAt
 }
 
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  action     String
+  entityType String
+  entityId   String?
+  details    String?
+  createdAt  DateTime @default(now())
+}
 
 model User {
   id        String   @id @default(uuid())
@@ -71,14 +79,53 @@ model User {
 }
 
 model CompanyProfile {
-  id           String @id @default(uuid())
-  companyName  String
-  overview     String
-  mission      String
-  vision       String
-  contactEmail String
-  phone        String
-  address      String
+  id          String @id @default(uuid())
+  companyName String
+  overview    String
+
+  // New About Us fields
+  foundedYear        String?
+  headquarters       String?
+  registrationNumber String?
+  logo               String?
+
+  // New Mission fields
+  missionTitle     String?
+  missionStatement String?
+
+  // New Vision fields
+  visionTitle     String?
+  visionStatement String?
+  longTermGoals   String?
+
+  // New Contact fields
+  generalEmail          String?
+  securityEmail         String?
+  mainPhone             String?
+  defenseContractsPhone String?
+  mailingAddress        String?
+  website               String?
+
+  // Relations
+  statistics     CompanyStatistic[]
+  missionPillars MissionPillar[]
+}
+
+model CompanyStatistic {
+  id               String         @id @default(uuid())
+  label            String
+  value            String
+  displayOrder     Int            @default(0)
+  companyProfileId String
+  companyProfile   CompanyProfile @relation(fields: [companyProfileId], references: [id], onDelete: Cascade)
+}
+
+model MissionPillar {
+  id               String         @id @default(uuid())
+  text             String
+  displayOrder     Int            @default(0)
+  companyProfileId String
+  companyProfile   CompanyProfile @relation(fields: [companyProfileId], references: [id], onDelete: Cascade)
 }
 
 model HomepageContent {
@@ -88,6 +135,14 @@ model HomepageContent {
   ctaText      String
   ctaLink      String
   heroImage    String
+
+  secondaryCtaText           String?
+  secondaryCtaLink           String?
+  servicesSectionTitle       String?
+  servicesSectionDescription String?
+  statisticsSectionTitle     String?
+
+  sectionOrder               String[] @default(["hero", "services", "statistics"])
 }
 
 model FooterContent {
@@ -95,6 +150,14 @@ model FooterContent {
   address String
   phone   String
   email   String
+
+  footerTagline     String?
+  footerDescription String?
+
+  companyLinks  String[]
+  solutionLinks String[]
+  resourceLinks String[]
+  legalLinks    String[]
 }
 
 model Service {
@@ -107,3 +170,40 @@ model Service {
   createdAt    DateTime @default(now())
 }
 
+model Settings {
+  id String @id @default(uuid())
+
+  // Branding
+  primaryColor   String?
+  accentColor    String?
+  backgroundDark String?
+  textColor      String?
+
+  primaryLogo String?
+  darkLogo    String?
+  favicon     String?
+
+  headingFont String?
+  bodyFont    String?
+
+  // Social Media
+  linkedinUrl  String?
+  twitterUrl   String?
+  youtubeUrl   String?
+  facebookUrl  String?
+  instagramUrl String?
+
+  // Site Settings
+  portalName      String?
+  siteName        String?
+  siteDescription String?
+  supportEmail    String?
+  supportPhone    String?
+
+  defaultLanguage String? @default("English")
+  timezone        String? @default("Asia/Kolkata")
+  maintenanceMode Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

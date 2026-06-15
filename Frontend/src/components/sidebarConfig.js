@@ -30,7 +30,7 @@ export const sidebarConfig = [
   {
     title: 'Content Management',
     icon: FileEdit,
-    path: '/content-management',
+    path: '/content',
   },
   {
     title: 'Media Library',

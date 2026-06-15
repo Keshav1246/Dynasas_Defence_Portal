@@ -10,13 +10,13 @@ const colorMap = {
   purple: 'bg-[#a855f7] text-white',
 };
 
-const StatsCard = ({ 
-  title, 
-  value, 
-  icon: Icon, 
-  growth, 
-  growthType = 'positive', 
-  iconColor = 'orange' 
+const StatsCard = ({
+  title,
+  value,
+  icon: Icon,
+  growth,
+  growthType = 'positive',
+  iconColor = 'orange'
 }) => {
   const iconStyle = colorMap[iconColor] || colorMap.orange;
 
@@ -36,7 +36,7 @@ const StatsCard = ({
         <div className={`w-[38px] h-[38px] rounded-full flex items-center justify-center ${iconStyle}`}>
           {Icon && <Icon className="w-[18px] h-[18px]" strokeWidth={2.5} />}
         </div>
-        
+
         {growth && currentGrowth && (
           <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full ${currentGrowth.bg} ${currentGrowth.text}`}>
             <GrowthIcon className="w-[11px] h-[11px]" strokeWidth={3} />

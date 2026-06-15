@@ -1,25 +1,21 @@
 const { z } = require("zod");
 
 const createHomepageSchema = z.object({
-  heroTitle: z
-    .string()
-    .min(2, "Hero title must be at least 2 characters"),
+  heroTitle: z.string().min(2),
+  heroSubtitle: z.string().min(5),
+  ctaText: z.string().min(2),
+  ctaLink: z.string().min(1),
+  heroImage: z.string().min(1),
 
-  heroSubtitle: z
-    .string()
-    .min(5, "Hero subtitle must be at least 5 characters"),
+  secondaryCtaText: z.string().optional(),
+  secondaryCtaLink: z.string().optional(),
 
-  ctaText: z
-    .string()
-    .min(2, "CTA text must be at least 2 characters"),
+  servicesSectionTitle: z.string().optional(),
+  servicesSectionDescription: z.string().optional(),
 
-  ctaLink: z
-  .string()
-  .min(1, "CTA link is required"),
+  statisticsSectionTitle: z.string().optional(),
 
-  heroImage: z
-    .string()
-    .min(1, "Hero image is required"),
+  sectionOrder: z.array(z.string()).optional(),
 });
 
 const updateHomepageSchema =
@@ -37,6 +33,14 @@ const createFooterSchema = z.object({
   email: z
     .string()
     .email("Please provide a valid email address"),
+
+  footerTagline: z.string().optional(),
+  footerDescription: z.string().optional(),
+
+  companyLinks: z.array(z.string()).optional(),
+  solutionLinks: z.array(z.string()).optional(),
+  resourceLinks: z.array(z.string()).optional(),
+  legalLinks: z.array(z.string()).optional(),
 });
 
 const updateFooterSchema =

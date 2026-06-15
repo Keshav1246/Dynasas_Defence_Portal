@@ -1,6 +1,7 @@
 const partnerService = require('../services/partnerService');
 const apiResponse = require('../utils/apiResponse');
 const AppError = require('../utils/AppError');
+const activityLogService = require('../services/ActivityLogService');
 
 /**
  * Controller to handle Partner Management HTTP requests
@@ -13,6 +14,12 @@ class PartnerController {
     try {
       const partner = await partnerService.createPartner(req.body);
       res.status(201).json(apiResponse.success(partner, 'Partner added successfully'));
+
+      activityLogService.logActivity({
+        action: `Created partner: ${partner.name}`,
+        entityType: "Partner",
+        entityId: partner.id,
+      });
     } catch (error) {
       next(error);
     }
@@ -79,6 +86,12 @@ class PartnerController {
 
       const updatedPartner = await partnerService.updatePartner(id, req.body);
       res.status(200).json(apiResponse.success(updatedPartner, 'Partner updated successfully'));
+
+      activityLogService.logActivity({
+        action: `Updated partner: ${updatedPartner.name}`,
+        entityType: "Partner",
+        entityId: updatedPartner.id,
+      });
     } catch (error) {
       next(error);
     }
@@ -98,6 +111,12 @@ class PartnerController {
 
       await partnerService.deletePartner(id);
       res.status(200).json(apiResponse.success(null, 'Partner soft-deleted successfully'));
+
+      activityLogService.logActivity({
+        action: `Deleted partner: ${partner.name}`,
+        entityType: "Partner",
+        entityId: id,
+      });
     } catch (error) {
       next(error);
     }
@@ -119,6 +138,12 @@ class PartnerController {
 
       const updatedPartner = await partnerService.updatePartnerStatus(id, status);
       res.status(200).json(apiResponse.success(updatedPartner, `Partner status changed to ${status} successfully`));
+
+      activityLogService.logActivity({
+        action: `Updated partner status to ${status}: ${updatedPartner.name}`,
+        entityType: "Partner",
+        entityId: updatedPartner.id,
+      });
     } catch (error) {
       next(error);
     }

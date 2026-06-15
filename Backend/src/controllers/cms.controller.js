@@ -1,5 +1,6 @@
 const prisma = require("../config/db");
 const logger = require("../config/logger");
+const activityLogService = require("../services/ActivityLogService");
 
 const getHomepageContent = async (req, res, next) => {
   try {
@@ -18,6 +19,15 @@ const getHomepageContent = async (req, res, next) => {
 
 const createHomepageContent = async (req, res, next) => {
   try {
+    const existing =
+      await prisma.homepageContent.findFirst();
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Homepage content already exists",
+      });
+    }
     const homepageContent =
       await prisma.homepageContent.create({
         data: req.body,
@@ -27,6 +37,12 @@ const createHomepageContent = async (req, res, next) => {
       success: true,
       message: "Homepage Content Created",
       data: homepageContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Created homepage content: Homepage`,
+      entityType: "HomepageContent",
+      entityId: homepageContent.id,
     });
   } catch (error) {
     logger.error(error.message);
@@ -48,6 +64,12 @@ const updateHomepageContent = async (req, res, next) => {
       success: true,
       message: "Homepage Content Updated",
       data: homepageContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Updated homepage content: Homepage`,
+      entityType: "HomepageContent",
+      entityId: homepageContent.id,
     });
   } catch (error) {
     logger.error(error.message);
@@ -72,6 +94,15 @@ const getFooterContent = async (req, res, next) => {
 
 const createFooterContent = async (req, res, next) => {
   try {
+    const existing =
+      await prisma.footerContent.findFirst();
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Footer content already exists",
+      });
+    }
     const footerContent =
       await prisma.footerContent.create({
         data: req.body,
@@ -81,6 +112,12 @@ const createFooterContent = async (req, res, next) => {
       success: true,
       message: "Footer Content Created",
       data: footerContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Created footer content: Footer`,
+      entityType: "FooterContent",
+      entityId: footerContent.id,
     });
   } catch (error) {
     logger.error(error.message);
@@ -102,6 +139,12 @@ const updateFooterContent = async (req, res, next) => {
       success: true,
       message: "Footer Content Updated",
       data: footerContent,
+    });
+
+    activityLogService.logActivity({
+      action: `Updated footer settings`,
+      entityType: "FooterContent",
+      entityId: footerContent.id,
     });
   } catch (error) {
     logger.error(error.message);
