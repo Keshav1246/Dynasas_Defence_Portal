@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const env = require('./src/config/env');
 
 async function test() {
-  const token = jwt.sign({ id: 'test-admin', role: 'admin' }, env.JWT_SECRET, { expiresIn: '1h' });
-  
+  const token = jwt.sign({ id: 'test-admin', role: 'ADMIN' }, env.JWT_SECRET, { expiresIn: '1h' });
+
   const headers = { Authorization: `Bearer ${token}` };
 
   try {

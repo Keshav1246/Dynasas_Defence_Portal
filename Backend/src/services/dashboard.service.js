@@ -58,7 +58,7 @@ class DashboardService {
     });
 
     // 5. ADMIN USERS
-    const totalAdminUsers = await prisma.user.count({ where: { role: 'admin' } });
+    const totalAdminUsers = await prisma.user.count({ where: { role: 'ADMIN' } });
 
     // 6. SERVICE PUBLISHING TREND (Monthly grouping in JS)
     const allServices = await prisma.service.findMany({
@@ -67,7 +67,7 @@ class DashboardService {
     });
 
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
+
     // Grouping logic for last 6 months
     const last6Months = [];
     const currentDate = new Date();

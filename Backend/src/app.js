@@ -3,6 +3,7 @@ const env = require('./config/env');
 
 const express = require("express");
 const cors = require("cors");
+const logger = require("./config/logger");
 
 // Import Routes
 const authRoutes = require("./routes/auth.routes");
