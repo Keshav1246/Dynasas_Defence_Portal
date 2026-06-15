@@ -19,6 +19,15 @@ const getHomepageContent = async (req, res, next) => {
 
 const createHomepageContent = async (req, res, next) => {
   try {
+    const existing =
+      await prisma.homepageContent.findFirst();
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Homepage content already exists",
+      });
+    }
     const homepageContent =
       await prisma.homepageContent.create({
         data: req.body,
@@ -85,6 +94,15 @@ const getFooterContent = async (req, res, next) => {
 
 const createFooterContent = async (req, res, next) => {
   try {
+    const existing =
+      await prisma.footerContent.findFirst();
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Footer content already exists",
+      });
+    }
     const footerContent =
       await prisma.footerContent.create({
         data: req.body,
@@ -124,7 +142,7 @@ const updateFooterContent = async (req, res, next) => {
     });
 
     activityLogService.logActivity({
-      action: `Updated footer content: Footer`,
+      action: `Updated footer settings`,
       entityType: "FooterContent",
       entityId: footerContent.id,
     });

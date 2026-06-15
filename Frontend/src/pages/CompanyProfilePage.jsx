@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from '../components/PageHeader';
 import CompanyProfileSidebar from '../components/company-profile/CompanyProfileSidebar';
 import AboutSection from '../components/company-profile/AboutSection';
@@ -6,40 +6,187 @@ import MissionSection from '../components/company-profile/MissionSection';
 import VisionSection from '../components/company-profile/VisionSection';
 import StatisticsSection from '../components/company-profile/StatisticsSection';
 import ContactSection from '../components/company-profile/ContactSection';
-import { companyProfileData } from '../data/mockCompanyProfile';
+import { 
+  getCompanyProfile, 
+  updateCompanyProfile,
+  createStatistic, updateStatistic, deleteStatistic,
+  createPillar, updatePillar, deletePillar
+} from '../services/companyProfile.service';
+import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 
 const CompanyProfilePage = () => {
   const [activeSection, setActiveSection] = useState('about');
-  const [profileData, setProfileData] = useState(companyProfileData);
+  const [profileData, setProfileData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSaveSection = (sectionKey, sectionData) => {
-    // In a real application, this would be an API call
-    // For Phase 1, we just update the local master state
-    setProfileData((prev) => ({
-      ...prev,
-      [sectionKey]: sectionData
-    }));
+  const refreshData = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await getCompanyProfile();
+      
+      // Map flat backend model to nested frontend UI structure
+      setProfileData({
+        id: data.id,
+        about: {
+          companyName: data.companyName || '',
+          foundedYear: data.foundedYear || '',
+          headquarters: data.headquarters || '',
+          registrationNumber: data.registrationNumber || '',
+          overview: data.overview || '',
+          logoUrl: data.logo || ''
+        },
+        mission: {
+          title: data.missionTitle || '',
+          statement: data.missionStatement || '',
+          pillars: data.missionPillars || []
+        },
+        vision: {
+          title: data.visionTitle || '',
+          statement: data.visionStatement || '',
+          longTermGoals: data.longTermGoals || ''
+        },
+        statistics: data.statistics || [],
+        contact: {
+          generalEmail: data.generalEmail || '',
+          securityEmail: data.securityEmail || '',
+          mainPhone: data.mainPhone || '',
+          defenseContracts: data.defenseContractsPhone || '',
+          address: data.mailingAddress || '',
+          website: data.website || ''
+        }
+      });
+    } catch (err) {
+      setError(err.message || 'Failed to load company profile');
+      toast.error('Failed to load company profile');
+    }
+  }, []);
+
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+    await refreshData();
+    setIsLoading(false);
+  }, [refreshData]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  const handleSaveSection = async (sectionKey, sectionData) => {
+    if (!profileData || !profileData.id) return;
     
-    // Optional: Add a success toast notification here
-    console.log(`Saved ${sectionKey} data:`, sectionData);
+    setIsSaving(true);
+    try {
+      if (sectionKey === 'about') {
+        await updateCompanyProfile(profileData.id, {
+          companyName: sectionData.companyName,
+          foundedYear: sectionData.foundedYear,
+          headquarters: sectionData.headquarters,
+          registrationNumber: sectionData.registrationNumber,
+          overview: sectionData.overview,
+          logo: sectionData.logoUrl
+        });
+      } else if (sectionKey === 'mission') {
+        // Save Mission Profile Fields
+        await updateCompanyProfile(profileData.id, {
+          missionTitle: sectionData.title,
+          missionStatement: sectionData.statement,
+        });
+
+        // Save Mission Pillars (Dirty tracking)
+        const { newItems, modifiedItems, deletedIds } = sectionData.pillarsData;
+        
+        for (const item of newItems) {
+          await createPillar({ text: item.text, companyProfileId: profileData.id });
+        }
+        for (const item of modifiedItems) {
+          await updatePillar(item.id, { text: item.text });
+        }
+        for (const id of deletedIds) {
+          await deletePillar(id);
+        }
+      } else if (sectionKey === 'vision') {
+        await updateCompanyProfile(profileData.id, {
+          visionTitle: sectionData.title,
+          visionStatement: sectionData.statement,
+          longTermGoals: sectionData.longTermGoals
+        });
+      } else if (sectionKey === 'statistics') {
+        const { newItems, modifiedItems, deletedIds } = sectionData;
+        
+        for (const item of newItems) {
+          await createStatistic({ value: item.value, label: item.label, companyProfileId: profileData.id });
+        }
+        for (const item of modifiedItems) {
+          await updateStatistic(item.id, { value: item.value, label: item.label });
+        }
+        for (const id of deletedIds) {
+          await deleteStatistic(id);
+        }
+      } else if (sectionKey === 'contact') {
+        await updateCompanyProfile(profileData.id, {
+          generalEmail: sectionData.generalEmail,
+          securityEmail: sectionData.securityEmail,
+          mainPhone: sectionData.mainPhone,
+          defenseContractsPhone: sectionData.defenseContracts,
+          mailingAddress: sectionData.address,
+          website: sectionData.website
+        });
+      }
+
+      toast.success(`${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)} updated successfully`);
+      await refreshData(); // Refresh master data without unmounting
+    } catch (err) {
+      toast.error(err.message || `Failed to update ${sectionKey}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const renderActiveSection = () => {
+    if (!profileData) return null;
+
+    const props = { onSave: handleSaveSection, disabled: isSaving };
+    
     switch (activeSection) {
       case 'about':
-        return <AboutSection data={profileData.about} onSave={handleSaveSection} />;
+        return <AboutSection data={profileData.about} {...props} />;
       case 'mission':
-        return <MissionSection data={profileData.mission} onSave={handleSaveSection} />;
+        return <MissionSection data={profileData.mission} {...props} />;
       case 'vision':
-        return <VisionSection data={profileData.vision} onSave={handleSaveSection} />;
+        return <VisionSection data={profileData.vision} {...props} />;
       case 'statistics':
-        return <StatisticsSection data={profileData.statistics} onSave={handleSaveSection} />;
+        return <StatisticsSection data={profileData.statistics} {...props} />;
       case 'contact':
-        return <ContactSection data={profileData.contact} onSave={handleSaveSection} />;
+        return <ContactSection data={profileData.contact} {...props} />;
       default:
-        return <AboutSection data={profileData.about} onSave={handleSaveSection} />;
+        return <AboutSection data={profileData.about} {...props} />;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+      </div>
+    );
+  }
+
+  if (error && !profileData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-4">
+        <p className="text-gray-500">{error}</p>
+        <button 
+          onClick={fetchProfile}
+          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -54,7 +201,7 @@ const CompanyProfilePage = () => {
           onSectionChange={setActiveSection} 
         />
         
-        <div className="flex-1 min-w-0">
+        <div className={`flex-1 min-w-0 transition-opacity ${isSaving ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
           {renderActiveSection()}
         </div>
       </div>

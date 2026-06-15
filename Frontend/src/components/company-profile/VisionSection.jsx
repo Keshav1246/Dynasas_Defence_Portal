@@ -52,8 +52,8 @@ const VisionSection = ({ data, onSave }) => {
         <div>
           <label className="block mb-2 text-sm font-semibold text-gray-700">Long-term Goals</label>
           <textarea 
-            name="goals"
-            value={formData.goals}
+            name="longTermGoals"
+            value={formData.longTermGoals}
             onChange={handleChange}
             rows={3}
             className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all leading-relaxed text-sm text-gray-700"

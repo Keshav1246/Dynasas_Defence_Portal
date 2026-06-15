@@ -8,6 +8,7 @@ import QuickActionsCard from '../components/QuickActionsCard';
 import PendingTasksCard from '../components/PendingTasksCard';
 import MediaStorageCard from '../components/MediaStorageCard';
 import ContentHealthCard from '../components/ContentHealthCard';
+import ActivityLogModal from '../components/dashboard/ActivityLogModal';
 import { Layers, CheckCircle, MessageSquare, Image as ImageIcon, Handshake, Users } from 'lucide-react';
 import { getDashboardData } from '../services/dashboard.service';
 
@@ -15,6 +16,7 @@ const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
 
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
@@ -125,7 +127,10 @@ const Dashboard = () => {
 
       {/* Row 3: Recent Activity | Quick Actions + Pending Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <RecentActivityCard activities={data.recentActivity} />
+        <RecentActivityCard 
+          activities={data.recentActivity} 
+          onViewAll={() => setIsActivityModalOpen(true)} 
+        />
         <div className="flex flex-col gap-6">
           <QuickActionsCard />
           <PendingTasksCard stats={data.stats} />
@@ -137,6 +142,11 @@ const Dashboard = () => {
         <MediaStorageCard mediaBreakdown={data.mediaBreakdown} totalStorageUsed={data.stats.totalStorageUsed} />
         <ContentHealthCard contentHealth={data.contentHealth} />
       </div>
+
+      <ActivityLogModal 
+        isOpen={isActivityModalOpen} 
+        onClose={() => setIsActivityModalOpen(false)} 
+      />
     </>
   );
 };

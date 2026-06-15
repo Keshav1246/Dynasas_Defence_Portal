@@ -13,6 +13,8 @@ const mediaRouter = require('./routes/mediaRoutes');
 const partnerRouter = require('./routes/partnerRoutes');
 const { contactRouter, inquiryRouter } = require('./routes/inquiryRoutes');
 const dashboardRoutes = require("./routes/dashboard.routes");
+const activityLogRoutes = require("./routes/activityLogRoutes");
+const settingsRoutes = require("./routes/settings.routes");
 
 // Import global error middleware
 const errorMiddleware = require('./middlewares/errorMiddleware');
@@ -51,7 +53,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/company", companyRoutes);
+app.use("/api/v1/company-profile", companyRoutes);
 app.use("/api/v1/cms", cmsRoutes);
 app.use("/api/v1/services", serviceRoutes);
 app.use("/api/v1/media", mediaRouter);
@@ -59,6 +61,8 @@ app.use("/api/v1/partners", partnerRouter);
 app.use("/api/v1/inquiries", inquiryRouter);
 app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/dashboard", dashboardRoutes);
+app.use("/api/v1/activity-logs", activityLogRoutes);
+app.use("/api/v1/settings", settingsRoutes);
 
 // Handle undefined routes
 app.use((req, res, next) => {

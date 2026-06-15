@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import SectionHeader from '../company-profile/SectionHeader';
-import { Link as LinkIcon } from 'lucide-react';
+import { Link as LinkIcon, AlertCircle } from 'lucide-react';
 
 const LinkedinIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -37,39 +37,62 @@ const InstagramIcon = (props) => (
   </svg>
 );
 
-const SocialLinksSettings = ({ data, onSave }) => {
+const SocialLinksSettings = ({ data, onSave, isSaving }) => {
   const [formData, setFormData] = useState(data);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setFormData(data);
+    setErrors({});
   }, [data]);
 
   const handleDiscard = () => {
     setFormData(data);
+    setErrors({});
+  };
+
+  const validateUrl = (url) => {
+    if (!url || url.trim() === '') return null;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return 'URL must start with http:// or https://';
+    }
+    return null;
   };
 
   const handleChange = (id, value) => {
     setFormData(prev => prev.map(item => item.id === id ? { ...item, value } : item));
+    const error = validateUrl(value);
+    setErrors(prev => ({ ...prev, [id]: error }));
   };
 
   const getIcon = (id) => {
     switch (id) {
-      case 'linkedin': return <LinkedinIcon className="w-[18px] h-[18px] text-[#0A66C2]" />;
-      case 'twitter': return <TwitterIcon className="w-[18px] h-[18px] text-[#000000]" />;
-      case 'youtube': return <YoutubeIcon className="w-[18px] h-[18px] text-[#FF0000]" />;
-      case 'facebook': return <FacebookIcon className="w-[18px] h-[18px] text-[#1877F2]" />;
-      case 'instagram': return <InstagramIcon className="w-[18px] h-[18px] text-[#E4405F]" />;
+      case 'linkedinUrl': return <LinkedinIcon className="w-[18px] h-[18px] text-[#0A66C2]" />;
+      case 'twitterUrl': return <TwitterIcon className="w-[18px] h-[18px] text-[#000000]" />;
+      case 'youtubeUrl': return <YoutubeIcon className="w-[18px] h-[18px] text-[#FF0000]" />;
+      case 'facebookUrl': return <FacebookIcon className="w-[18px] h-[18px] text-[#1877F2]" />;
+      case 'instagramUrl': return <InstagramIcon className="w-[18px] h-[18px] text-[#E4405F]" />;
       default: return null;
     }
+  };
+
+  const isDirty = JSON.stringify(data) !== JSON.stringify(formData);
+  const hasErrors = Object.values(errors).some(err => err !== null);
+
+  const handleSave = () => {
+    if (hasErrors) return;
+    onSave('social', formData);
   };
 
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
       <SectionHeader 
         title="Social Media Links" 
-        subtitle="Manage portal settings and configuration" 
-        onSave={() => onSave('social', formData)} 
+        subtitle="Manage portal configuration and connections" 
+        onSave={handleSave} 
         onDiscard={handleDiscard} 
+        isDirty={isDirty && !hasErrors}
+        isSaving={isSaving}
       />
 
       <div className="space-y-6 mt-2">
@@ -88,9 +111,15 @@ const SocialLinksSettings = ({ data, onSave }) => {
                 value={social.value}
                 onChange={(e) => handleChange(social.id, e.target.value)}
                 placeholder="https://..."
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all text-[13px] text-gray-700 placeholder-gray-300"
+                className={`w-full pl-10 pr-4 py-2.5 bg-white border ${errors[social.id] ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-[#F97316]'} rounded-xl focus:ring-2 focus:border-transparent outline-none transition-all text-[13px] text-gray-700 placeholder-gray-300`}
               />
             </div>
+            {errors[social.id] && (
+              <div className="flex items-center gap-1 mt-1.5 text-[11px] font-medium text-red-500">
+                <AlertCircle className="w-3.5 h-3.5" />
+                {errors[social.id]}
+              </div>
+            )}
           </div>
         ))}
       </div>

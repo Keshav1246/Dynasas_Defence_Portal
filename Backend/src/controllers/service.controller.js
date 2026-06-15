@@ -9,12 +9,35 @@ const getAllServices = async (req, res, next) => {
 
     const skip = (page - 1) * limit;
 
-    const totalServices = await prisma.service.count();
+    const { search, status } = req.query;
+
+    const where = {};
+
+    if (status && status.toLowerCase() !== "all") {
+      where.status = status.toLowerCase();
+    }
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const totalServices = await prisma.service.count({ where });
+    
+    // Also fetch global stats for the cards regardless of current search filters
+    const [globalTotal, publishedCount, draftCount, archivedCount] = await Promise.all([
+      prisma.service.count(),
+      prisma.service.count({ where: { status: 'published' } }),
+      prisma.service.count({ where: { status: 'draft' } }),
+      prisma.service.count({ where: { status: 'archived' } })
+    ]);
 
     const services = await prisma.service.findMany({
+      where,
       skip,
       take: limit,
-
       orderBy: {
         displayOrder: "asc",
       },
@@ -28,6 +51,13 @@ const getAllServices = async (req, res, next) => {
         page,
         limit,
         totalPages: Math.ceil(totalServices / limit),
+      },
+
+      stats: {
+        total: globalTotal,
+        published: publishedCount,
+        draft: draftCount,
+        archived: archivedCount
       },
 
       data: services,

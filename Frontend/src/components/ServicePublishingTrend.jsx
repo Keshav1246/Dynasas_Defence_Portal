@@ -14,6 +14,10 @@ const ServicePublishingTrend = ({ data }) => {
         <div className="w-2 h-2 rounded-full bg-[#e5e7eb] mr-2"></div>
         <span>Draft</span>
       </div>
+      <div className="flex items-center">
+        <div className="w-2 h-2 rounded-full bg-[#9ca3af] mr-2"></div>
+        <span>Archived</span>
+      </div>
     </>
   );
 
@@ -22,11 +26,11 @@ const ServicePublishingTrend = ({ data }) => {
 
   return (
     <AnalyticsCard
-      title="Service Publishing Trend"
-      subtitle="Published vs Draft services — last 6 months"
+      title="Published, Draft & Archived services — last 6 months"
+      subtitle="Published, Draft, and Archived services over time"
       legend={legend}
     >
-      {data.every(d => d.published === 0 && d.draft === 0) ? (
+      {data.every(d => d.published === 0 && d.draft === 0 && d.archived === 0) ? (
         <div className="flex items-center justify-center h-[250px] w-full mt-2">
           <p className="text-[14px] text-gray-500 font-medium">No service publishing data available.</p>
         </div>
@@ -61,8 +65,9 @@ const ServicePublishingTrend = ({ data }) => {
                 tick={{ fill: '#f97316', fontSize: 13, fontWeight: 600 }}
                 ticks={[0, 4, 8, 12, 16]}
               />
-              <Bar dataKey="published" fill="#f97316" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="draft" fill="#e5e7eb" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="published" name="Published" fill="#f97316" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="draft" name="Draft" fill="#e5e7eb" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="archived" name="Archived" fill="#9ca3af" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

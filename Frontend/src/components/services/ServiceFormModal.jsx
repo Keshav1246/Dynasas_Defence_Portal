@@ -29,6 +29,8 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
   const statusValue = watch('status');
   const [visualType, setVisualType] = useState('image');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -49,6 +51,8 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
           displayOrder: 0
         });
       }
+      setSelectedFile(null);
+      setPreviewUrl(service?.image || '');
       setActiveTab('basic');
     }
   }, [isOpen, service, reset]);
@@ -56,8 +60,37 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
   if (!isOpen) return null;
 
   const onSubmit = async (data) => {
-    await onSave(data);
-    onClose();
+    try {
+      // If there's a selected file, upload it first
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        
+        const token = localStorage.getItem('token');
+        const uploadRes = await fetch('http://localhost:5001/api/v1/media/upload', {
+          method: 'POST',
+          headers: {
+            ...(token && { Authorization: `Bearer ${token}` })
+          },
+          body: formData
+        });
+        
+        if (!uploadRes.ok) {
+          throw new Error('Image upload failed');
+        }
+        
+        const uploadData = await uploadRes.json();
+        // Assuming response has data.fileUrl
+        data.image = uploadData.data?.fileUrl || uploadData.fileUrl;
+      }
+      
+      await onSave(data);
+      onClose();
+    } catch (err) {
+      console.error(err);
+      // Let the parent catch it
+      throw err;
+    }
   };
 
   const tabs = [
@@ -157,16 +190,18 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
                     </button>
                     <button 
                       type="button" 
-                      onClick={() => setVisualType('video')}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all ${visualType === 'video' ? 'border border-orange-200 bg-orange-50 text-orange-600 shadow-sm' : 'border border-gray-200 bg-white text-gray-500 hover:bg-gray-50'}`}
+                      disabled
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all border border-gray-100 bg-gray-50 text-gray-400 opacity-60 cursor-not-allowed"
+                      title="Coming Soon"
                     >
                       <Video className="w-4 h-4" />
                       Video
                     </button>
                     <button 
                       type="button" 
-                      onClick={() => setVisualType('3d')}
-                      className={`flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all ${visualType === '3d' ? 'border border-orange-200 bg-orange-50 text-orange-600 shadow-sm' : 'border border-gray-200 bg-white text-gray-500 hover:bg-gray-50'}`}
+                      disabled
+                      className="flex items-center justify-center gap-2 py-2.5 rounded-xl font-medium text-sm transition-all border border-gray-100 bg-gray-50 text-gray-400 opacity-60 cursor-not-allowed"
+                      title="Coming Soon"
                     >
                       <Box className="w-4 h-4" />
                       3D Model
@@ -184,11 +219,29 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
                       </div>
                       <p className="text-xs text-gray-400 font-medium tracking-wide uppercase mt-1">PNG, JPG, MP4, GLB — max 200MB</p>
                     </div>
-                    <input type="file" className="hidden" accept="image/*,video/mp4,.glb" onChange={(e) => {
-                      // Note: In real app, you would handle file upload here 
-                      // e.g., using a separate state to hold the file before submit
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedFile(e.target.files[0]);
+                        setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+                      }
                     }} />
                   </label>
+                  {previewUrl && (
+                    <div className="mt-4 relative rounded-xl overflow-hidden border border-gray-200">
+                      <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedFile(null);
+                          setPreviewUrl('');
+                          setValue('image', '');
+                        }}
+                        className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-gray-600 hover:text-rose-500 shadow-sm"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -203,8 +256,8 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
                       className={`w-full px-4 py-2.5 bg-white border ${isDropdownOpen ? 'border-orange-500 ring-2 ring-orange-500 ring-opacity-20' : errors.status ? 'border-rose-300' : 'border-gray-200 hover:border-gray-300'} rounded-xl cursor-pointer flex items-center justify-between transition-all select-none`}
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
-                      <span className="text-gray-700 font-medium text-sm">
-                        {statusValue === 'published' ? 'Published (Visible on website)' : 'Draft (Hidden from public)'}
+                      <span className="text-gray-700 font-medium text-sm capitalize">
+                        {statusValue}
                       </span>
                       <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </div>
@@ -228,6 +281,15 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
                           }}
                         >
                           Published (Visible on website)
+                        </div>
+                        <div 
+                          className={`px-4 py-2.5 cursor-pointer text-sm transition-colors flex items-center justify-between ${statusValue === 'archived' ? 'bg-orange-50 text-orange-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-orange-500'}`}
+                          onClick={() => {
+                            setValue('status', 'archived', { shouldValidate: true, shouldDirty: true });
+                            setIsDropdownOpen(false);
+                          }}
+                        >
+                          Archived (Disabled)
                         </div>
                       </div>
                     )}

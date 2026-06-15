@@ -14,7 +14,7 @@ const getIconForActivity = (activity) => {
   return Info;
 };
 
-const RecentActivityCard = ({ activities = [] }) => {
+const RecentActivityCard = ({ activities = [], onViewAll }) => {
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col h-full">
       <div className="flex justify-between items-center mb-6">
@@ -22,7 +22,10 @@ const RecentActivityCard = ({ activities = [] }) => {
           <h3 className="text-[15px] font-semibold text-gray-900">Recent Activity</h3>
           <p className="text-[13px] text-gray-500 mt-1">Latest actions across the portal</p>
         </div>
-        <button className="px-4 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 border border-gray-100 transition-colors">
+        <button 
+          onClick={onViewAll}
+          className="px-4 py-1.5 text-xs font-medium text-gray-500 bg-gray-50 rounded-full hover:bg-gray-100 border border-gray-100 transition-colors"
+        >
           View All
         </button>
       </div>

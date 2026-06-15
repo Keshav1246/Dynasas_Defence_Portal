@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import ScrollToTop from './components/ScrollToTop'
 import AdminLayout from './components/AdminLayout'
 import Dashboard from './pages/Dashboard'
@@ -12,6 +13,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <Toaster position="top-center" />
       <Routes>
         {/* All routes inside this block will share the AdminLayout (Sidebar + TopNavbar) */}
         <Route path="/" element={<AdminLayout />}>

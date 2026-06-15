@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, GripVertical, Trash2, Plus } from 'lucide-react';
+import { Eye, GripVertical, Trash2, Plus, Loader2 } from 'lucide-react';
 
-const ServicesEditor = ({ data, onSave }) => {
+const ServicesEditor = ({ data, onSave, isSaving }) => {
   const [formData, setFormData] = useState(data);
 
   useEffect(() => {
@@ -29,13 +29,36 @@ const ServicesEditor = ({ data, onSave }) => {
 
   const handleAddService = () => {
     setFormData(prev => {
-      const newId = prev.servicesList.length > 0 ? Math.max(...prev.servicesList.map(s => s.id)) + 1 : 1;
+      const newId = `temp-${Date.now()}`;
       return {
         ...prev,
-        servicesList: [...prev.servicesList, { id: newId, text: '' }]
+        servicesList: [...prev.servicesList, { id: newId, text: '', description: '', status: 'draft' }]
       };
     });
   };
+
+  const handleDragStart = (e, index) => {
+    e.dataTransfer.setData('index', index);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, index) => {
+    const dragIndex = Number(e.dataTransfer.getData('index'));
+    if (dragIndex === index || isNaN(dragIndex)) return;
+    
+    setFormData(prev => {
+      const newList = [...prev.servicesList];
+      const draggedItem = newList[dragIndex];
+      newList.splice(dragIndex, 1);
+      newList.splice(index, 0, draggedItem);
+      return { ...prev, servicesList: newList };
+    });
+  };
+
+  const isDirty = JSON.stringify(data) !== JSON.stringify(formData);
 
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
@@ -53,9 +76,11 @@ const ServicesEditor = ({ data, onSave }) => {
           </button>
           <button 
             onClick={() => onSave('services', formData)}
-            className="px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors"
+            disabled={isSaving || !isDirty}
+            className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
@@ -87,9 +112,16 @@ const ServicesEditor = ({ data, onSave }) => {
           <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">SERVICES (drag to reorder)</label>
           <div className="space-y-3">
             {formData.servicesList.map((service, index) => (
-              <div key={service.id} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 pr-3 shadow-[0_2px_8px_rgba(0,0,0,0.02)] group">
-                <button className="p-1.5 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing">
-                  <GripVertical className="w-4 h-4" />
+              <div 
+                key={service.id} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+                className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2 pr-3 shadow-[0_2px_8px_rgba(0,0,0,0.02)] group hover:border-orange-200 transition-colors cursor-grab active:cursor-grabbing"
+              >
+                <button className="p-1.5 text-gray-300 group-hover:text-gray-500">
+                  <GripVertical className="w-4 h-4 pointer-events-none" />
                 </button>
                 <div className="w-6 h-6 rounded-md bg-[#FFF7F2] text-[#F97316] font-bold text-xs flex items-center justify-center shrink-0 border border-[#FDBA74]">
                   {index + 1}
@@ -99,6 +131,7 @@ const ServicesEditor = ({ data, onSave }) => {
                   value={service.text}
                   onChange={(e) => handleServiceChange(service.id, e.target.value)}
                   className="w-full px-3 py-1.5 bg-transparent border-none focus:ring-0 outline-none transition-all text-[13px] font-medium text-gray-800"
+                  placeholder="Service Name"
                 />
                 <button 
                   onClick={() => handleDeleteService(service.id)}

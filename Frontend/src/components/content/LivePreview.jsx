@@ -20,6 +20,9 @@ const LivePreview = ({ heroData }) => {
             <span className="text-xs font-bold text-white leading-snug line-clamp-2">
               {heroData?.heroTitle || 'Hero Section'}
             </span>
+            <span className="text-[9px] font-medium text-gray-400 leading-tight line-clamp-2 mt-1.5">
+              {heroData?.heroSubtitle || 'Hero Subtitle'}
+            </span>
           </div>
         </div>
 

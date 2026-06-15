@@ -1,16 +1,116 @@
 import React, { useState, useEffect } from 'react';
 import SectionHeader from '../company-profile/SectionHeader';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { getFooterContent, updateFooterContent, createFooterContent } from '../../services/cms.service';
 
-const FooterSettings = ({ data, onSave }) => {
-  const [formData, setFormData] = useState(data);
+const defaultData = {
+  tagline: "",
+  description: "",
+  columns: [
+    { id: 'company', title: 'Company', links: [] },
+    { id: 'solutions', title: 'Solutions', links: [] },
+    { id: 'resources', title: 'Resources', links: [] },
+    { id: 'legal', title: 'Legal', links: [] }
+  ]
+};
+
+const FooterSettings = () => {
+  const [formData, setFormData] = useState(defaultData);
+  const [originalData, setOriginalData] = useState(defaultData);
+  const [footerId, setFooterId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const fetchFooter = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getFooterContent();
+      
+      if (data) {
+        setFooterId(data.id);
+        const mappedData = {
+          tagline: data.footerTagline || "",
+          description: data.footerDescription || "",
+          columns: [
+            { id: 'company', title: 'Company', links: data.companyLinks || [] },
+            { id: 'solutions', title: 'Solutions', links: data.solutionLinks || [] },
+            { id: 'resources', title: 'Resources', links: data.resourceLinks || [] },
+            { id: 'legal', title: 'Legal', links: data.legalLinks || [] }
+          ]
+        };
+        setFormData(mappedData);
+        setOriginalData(mappedData);
+      }
+    } catch (error) {
+      toast.error('Failed to load footer settings');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setFormData(data);
-  }, [data]);
+    fetchFooter();
+  }, []);
 
   const handleDiscard = () => {
-    setFormData(data);
+    setFormData(originalData);
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+
+      const processLinks = (links) => {
+        return links
+          .map(link => link.trim())
+          .filter(link => link !== "");
+      };
+
+      const getColumnLinks = (id) => {
+        const column = formData.columns.find(col => col.id === id);
+        return column ? processLinks(column.links) : [];
+      };
+
+      const payload = {
+        footerTagline: formData.tagline.trim(),
+        footerDescription: formData.description.trim(),
+        companyLinks: getColumnLinks('company'),
+        solutionLinks: getColumnLinks('solutions'),
+        resourceLinks: getColumnLinks('resources'),
+        legalLinks: getColumnLinks('legal')
+      };
+
+      let freshData;
+      if (footerId) {
+        freshData = await updateFooterContent(footerId, payload);
+      } else {
+        freshData = await createFooterContent(payload);
+        setFooterId(freshData.id);
+      }
+      
+      const newMappedData = {
+        tagline: freshData.footerTagline || "",
+        description: freshData.footerDescription || "",
+        columns: [
+          { id: 'company', title: 'Company', links: freshData.companyLinks || [] },
+          { id: 'solutions', title: 'Solutions', links: freshData.solutionLinks || [] },
+          { id: 'resources', title: 'Resources', links: freshData.resourceLinks || [] },
+          { id: 'legal', title: 'Legal', links: freshData.legalLinks || [] }
+        ]
+      };
+      
+      setFormData(newMappedData);
+      setOriginalData(newMappedData);
+      
+      toast.success('Footer updated successfully');
+    } catch (error) {
+      toast.error('Failed to update footer');
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleColumnChange = (columnId, linkIndex, newValue) => {
@@ -51,13 +151,25 @@ const FooterSettings = ({ data, onSave }) => {
     }));
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-8 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-4 text-gray-400">
+          <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+          <span className="text-sm font-medium">Loading Footer Settings...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
       <SectionHeader 
         title="Footer Management" 
         subtitle="Manage portal settings and configuration" 
-        onSave={() => onSave('footer', formData)} 
-        onDiscard={handleDiscard} 
+        onSave={handleSave} 
+        onDiscard={handleDiscard}
+        isSaving={isSaving}
       />
 
       <div className="space-y-6 mt-2">

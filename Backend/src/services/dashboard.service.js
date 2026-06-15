@@ -77,8 +77,10 @@ class DashboardService {
         month: monthNames[d.getMonth()],
         year: d.getFullYear(),
         monthIndex: d.getMonth(),
+        monthIndex: d.getMonth(),
         published: 0,
-        draft: 0
+        draft: 0,
+        archived: 0
       });
     }
 
@@ -88,9 +90,10 @@ class DashboardService {
       if (targetMonth) {
         if (service.status === 'published') {
           targetMonth.published += 1;
-        } else {
-          // Count anything not published as draft for the chart
+        } else if (service.status === 'draft') {
           targetMonth.draft += 1;
+        } else if (service.status === 'archived') {
+          targetMonth.archived += 1;
         }
       }
     });
@@ -99,7 +102,8 @@ class DashboardService {
     const serviceTrend = last6Months.map(m => ({
       month: m.month,
       published: m.published,
-      draft: m.draft
+      draft: m.draft,
+      archived: m.archived
     }));
 
     // 7. INQUIRY OVERVIEW

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Trash2, Plus } from 'lucide-react';
+import { Eye, Trash2, Plus, Loader2, GripVertical } from 'lucide-react';
 
-const StatisticsEditor = ({ data, onSave }) => {
+const StatisticsEditor = ({ data, onSave, isSaving }) => {
   const [formData, setFormData] = useState(data);
 
   useEffect(() => {
@@ -29,13 +29,36 @@ const StatisticsEditor = ({ data, onSave }) => {
 
   const handleAddStat = () => {
     setFormData(prev => {
-      const newId = prev.statsList.length > 0 ? Math.max(...prev.statsList.map(s => s.id)) + 1 : 1;
+      const newId = `temp-${Date.now()}`;
       return {
         ...prev,
         statsList: [...prev.statsList, { id: newId, value: '', label: '' }]
       };
     });
   };
+
+  const handleDragStart = (e, index) => {
+    e.dataTransfer.setData('index', index);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, index) => {
+    const dragIndex = Number(e.dataTransfer.getData('index'));
+    if (dragIndex === index || isNaN(dragIndex)) return;
+    
+    setFormData(prev => {
+      const newList = [...prev.statsList];
+      const draggedItem = newList[dragIndex];
+      newList.splice(dragIndex, 1);
+      newList.splice(index, 0, draggedItem);
+      return { ...prev, statsList: newList };
+    });
+  };
+
+  const isDirty = JSON.stringify(data) !== JSON.stringify(formData);
 
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
@@ -53,9 +76,11 @@ const StatisticsEditor = ({ data, onSave }) => {
           </button>
           <button 
             onClick={() => onSave('statistics', formData)}
-            className="px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors"
+            disabled={isSaving || !isDirty}
+            className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
@@ -73,11 +98,21 @@ const StatisticsEditor = ({ data, onSave }) => {
         </div>
 
         <div>
-          <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">STATISTICS CARDS</label>
+          <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">STATISTICS CARDS (drag to reorder)</label>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {formData.statsList.map((stat) => (
-              <div key={stat.id} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] relative group flex flex-col gap-3">
+            {formData.statsList.map((stat, index) => (
+              <div 
+                key={stat.id} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, index)}
+                className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] relative group flex flex-col gap-3 hover:border-orange-200 transition-colors cursor-grab active:cursor-grabbing"
+              >
+                <div className="absolute top-3 left-3 text-gray-300 group-hover:text-gray-500">
+                  <GripVertical className="w-4 h-4 pointer-events-none" />
+                </div>
                 <button 
                   onClick={() => handleDeleteStat(stat.id)}
                   className="absolute top-3 right-3 p-1.5 text-gray-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
@@ -86,7 +121,7 @@ const StatisticsEditor = ({ data, onSave }) => {
                   <Trash2 className="w-[16px] h-[16px]" />
                 </button>
                 
-                <div>
+                <div className="mt-3">
                   <label className="block mb-1 text-[10px] font-bold text-gray-400 uppercase tracking-widest">VALUE</label>
                   <input 
                     type="text"
