@@ -1,6 +1,7 @@
 const mediaService = require('../services/mediaService');
 const apiResponse = require('../utils/apiResponse');
 const AppError = require('../utils/AppError');
+const activityLogService = require('../services/ActivityLogService');
 
 /**
  * Controller to handle Media Library HTTP requests
@@ -33,6 +34,12 @@ class MediaController {
             'File uploaded and registered successfully'
           )
         );
+
+      activityLogService.logActivity({
+        action: `Uploaded media: ${media.originalName}`,
+        entityType: "Media",
+        entityId: media.id,
+      });
     } catch (error) {
       next(error);
     }
@@ -105,6 +112,12 @@ class MediaController {
       res
         .status(200)
         .json(apiResponse.success(null, 'File soft-deleted successfully'));
+
+      activityLogService.logActivity({
+        action: `Deleted media: ${media.originalName}`,
+        entityType: "Media",
+        entityId: id,
+      });
     } catch (error) {
       next(error);
     }

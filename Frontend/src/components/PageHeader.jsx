@@ -20,10 +20,12 @@ const PageHeader = ({
         </p>
       </div>
 
-      {/* Right side: Action or Date Badge */}
-      <div className="shrink-0">
-        {action ? action : date ? <DateBadge date={date} icon={Clock} /> : null}
-      </div>
+      {/* Right side: Date Badge */}
+      {date && (
+        <div className="shrink-0">
+          <DateBadge date={date} icon={Clock} />
+        </div>
+      )}
     </div>
   );
 };

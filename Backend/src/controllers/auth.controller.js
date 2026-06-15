@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 const AppError = require("../utils/AppError");
 const logger = require("../config/logger");
+const activityLogService = require("../services/ActivityLogService");
 
 const registerAdmin = async (req, res, next) => {
   try {
@@ -30,6 +31,12 @@ const registerAdmin = async (req, res, next) => {
       success: true,
       message: "Admin created successfully",
       user,
+    });
+
+    activityLogService.logActivity({
+      action: `Created admin: ${user.name}`,
+      entityType: "User",
+      entityId: user.id,
     });
   } catch (error) {
     logger.error(error.message);

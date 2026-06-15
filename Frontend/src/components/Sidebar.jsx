@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+
 import { Zap, LogOut } from 'lucide-react';
 import { sidebarConfig } from './sidebarConfig';
 import { fetchUnreadCount } from '../api/inquiryApi';
 
 const Sidebar = () => {
     const [unreadInquiries, setUnreadInquiries] = useState(0);
+    const location = useLocation();
 
     useEffect(() => {
         fetchUnreadCount().then(res => {

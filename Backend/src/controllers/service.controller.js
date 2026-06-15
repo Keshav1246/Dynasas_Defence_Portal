@@ -1,7 +1,7 @@
 const prisma = require("../config/db");
 const AppError = require("../utils/AppError");
 const logger = require("../config/logger");
-
+const activityLogService = require("../services/ActivityLogService");
 const getAllServices = async (req, res, next) => {
   try {
     const page = Math.max(1, parseInt(req.query.page) || 1);
@@ -9,12 +9,35 @@ const getAllServices = async (req, res, next) => {
 
     const skip = (page - 1) * limit;
 
-    const totalServices = await prisma.service.count();
+    const { search, status } = req.query;
+
+    const where = {};
+
+    if (status && status.toLowerCase() !== "all") {
+      where.status = status.toLowerCase();
+    }
+
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const totalServices = await prisma.service.count({ where });
+    
+    // Also fetch global stats for the cards regardless of current search filters
+    const [globalTotal, publishedCount, draftCount, archivedCount] = await Promise.all([
+      prisma.service.count(),
+      prisma.service.count({ where: { status: 'published' } }),
+      prisma.service.count({ where: { status: 'draft' } }),
+      prisma.service.count({ where: { status: 'archived' } })
+    ]);
 
     const services = await prisma.service.findMany({
+      where,
       skip,
       take: limit,
-
       orderBy: {
         displayOrder: "asc",
       },
@@ -28,6 +51,13 @@ const getAllServices = async (req, res, next) => {
         page,
         limit,
         totalPages: Math.ceil(totalServices / limit),
+      },
+
+      stats: {
+        total: globalTotal,
+        published: publishedCount,
+        draft: draftCount,
+        archived: archivedCount
       },
 
       data: services,
@@ -71,6 +101,12 @@ const createService = async (req, res, next) => {
       message: "Service Created Successfully",
       data: service,
     });
+
+    activityLogService.logActivity({
+      action: `Created service: ${service.title}`,
+      entityType: "Service",
+      entityId: service.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -91,6 +127,12 @@ const updateService = async (req, res, next) => {
       message: "Service Updated Successfully",
       data: service,
     });
+
+    activityLogService.logActivity({
+      action: `Updated service: ${service.title}`,
+      entityType: "Service",
+      entityId: service.id,
+    });
   } catch (error) {
     logger.error(error.message);
     next(error);
@@ -101,13 +143,19 @@ const deleteService = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.service.delete({
+    const deletedService = await prisma.service.delete({
       where: { id },
     });
 
     res.status(200).json({
       success: true,
       message: "Service Deleted Successfully",
+    });
+
+    activityLogService.logActivity({
+      action: `Deleted service: ${deletedService.title}`,
+      entityType: "Service",
+      entityId: id,
     });
   } catch (error) {
     logger.error(error.message);
