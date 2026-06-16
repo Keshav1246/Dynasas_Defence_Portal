@@ -184,6 +184,8 @@ const ServicesPage = () => {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
+                totalRecords={totalServices}
+                limit={ITEMS_PER_PAGE}
                 onPageChange={setCurrentPage}
               />
             </div>

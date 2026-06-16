@@ -7,7 +7,8 @@ export const Pagination = ({
   totalRecords, 
   limit, 
   onPageChange, 
-  isLoading 
+  isLoading,
+  className = ''
 }) => {
   if (totalRecords === 0) return null;
 
@@ -36,31 +37,31 @@ export const Pagination = ({
   const pages = getPageNumbers();
 
   return (
-    <div className="flex items-center justify-between py-4 mt-4 border-t border-gray-100">
-      <div className="text-sm text-gray-500 font-medium">
+    <div className={`flex flex-col sm:flex-row items-center justify-between px-6 py-4 gap-4 ${className}`}>
+      <div className="text-sm text-gray-500 font-medium text-center sm:text-left">
         Showing <span className="text-gray-900 font-semibold">{startRecord}</span>–<span className="text-gray-900 font-semibold">{endRecord}</span> of <span className="text-gray-900 font-semibold">{totalRecords}</span> results
       </div>
       
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap justify-center items-center gap-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || isLoading}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center h-10 gap-1 px-4 py-2 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <ChevronLeft className="w-4 h-4" />
           Previous
         </button>
 
-        <div className="flex items-center gap-1 px-2">
+        <div className="flex items-center gap-2">
           {pages.map((page) => (
             <button
               key={page}
               onClick={() => onPageChange(page)}
               disabled={isLoading}
-              className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors ${
+              className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold transition-colors ${
                 currentPage === page
-                  ? 'bg-[#f95724] text-white'
-                  : 'text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:hover:bg-transparent'
+                  ? 'bg-[#f95724] text-white shadow-sm'
+                  : 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
               }`}
             >
               {page}
@@ -71,7 +72,7 @@ export const Pagination = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || isLoading}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center h-10 gap-1 px-4 py-2 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Next
           <ChevronRight className="w-4 h-4" />

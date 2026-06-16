@@ -36,6 +36,20 @@ export const updateCompanyProfile = async (id, data) => {
   return json.data;
 };
 
+export const createCompanyProfile = async (data) => {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Error creating company profile: ${response.statusText}`);
+  }
+  const json = await response.json();
+  return json.data;
+};
+
 // --- Statistics ---
 export const getStatistics = async () => {
   const response = await fetch(`${API_URL}/statistics`, {

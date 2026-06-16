@@ -9,6 +9,7 @@ import ContactSection from '../components/company-profile/ContactSection';
 import { 
   getCompanyProfile, 
   updateCompanyProfile,
+  createCompanyProfile,
   createStatistic, updateStatistic, deleteStatistic,
   createPillar, updatePillar, deletePillar
 } from '../services/companyProfile.service';
@@ -25,11 +26,11 @@ const CompanyProfilePage = () => {
   const refreshData = useCallback(async () => {
     try {
       setError(null);
-      const data = await getCompanyProfile();
+      const data = await getCompanyProfile() || {};
       
       // Map flat backend model to nested frontend UI structure
       setProfileData({
-        id: data.id,
+        id: data.id || null,
         about: {
           companyName: data.companyName || '',
           foundedYear: data.foundedYear || '',
@@ -75,19 +76,30 @@ const CompanyProfilePage = () => {
   }, [fetchProfile]);
 
   const handleSaveSection = async (sectionKey, sectionData) => {
-    if (!profileData || !profileData.id) return;
+    if (!profileData) return;
     
+    // If no profile exists yet, only allow saving the About section to create it
+    if (!profileData.id && sectionKey !== 'about') {
+      toast.error('Please save the About section first to initialize your company profile.');
+      return;
+    }
+
     setIsSaving(true);
     try {
       if (sectionKey === 'about') {
-        await updateCompanyProfile(profileData.id, {
+        const payload = {
           companyName: sectionData.companyName,
           foundedYear: sectionData.foundedYear,
           headquarters: sectionData.headquarters,
           registrationNumber: sectionData.registrationNumber,
           overview: sectionData.overview,
           logo: sectionData.logoUrl
-        });
+        };
+        if (!profileData.id) {
+          await createCompanyProfile(payload);
+        } else {
+          await updateCompanyProfile(profileData.id, payload);
+        }
       } else if (sectionKey === 'mission') {
         // Save Mission Profile Fields
         await updateCompanyProfile(profileData.id, {

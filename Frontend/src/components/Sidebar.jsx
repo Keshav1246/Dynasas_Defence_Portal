@@ -5,7 +5,7 @@ import { Zap, LogOut } from 'lucide-react';
 import { sidebarConfig } from './sidebarConfig';
 import { fetchUnreadCount } from '../api/inquiryApi';
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
     const [unreadInquiries, setUnreadInquiries] = useState(0);
     const location = useLocation();
 
@@ -54,6 +54,7 @@ const Sidebar = () => {
                         <NavLink
                             key={item.title}
                             to={item.path}
+                            onClick={onClose}
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-3 py-[9px] rounded-xl transition-all duration-200 w-full text-left
                                 ${isActive
@@ -101,9 +102,11 @@ const Sidebar = () => {
                 })}
             </nav>
 
-            {/* Bottom Actions */}
             <div className="mt-auto pt-3 border-t border-white/5">
-                <button className="flex items-center gap-3 w-full px-3 py-[10px] rounded-xl text-[#d45555] hover:bg-[#ff5a36]/10 transition-all duration-200 border border-red-500/10 bg-[#150d0f]">
+                <button 
+                  onClick={onClose}
+                  className="flex items-center gap-3 w-full px-3 py-[10px] rounded-xl text-[#d45555] hover:bg-[#ff5a36]/10 transition-all duration-200 border border-red-500/10 bg-[#150d0f]"
+                >
                     <LogOut className="w-[18px] h-[18px] shrink-0" strokeWidth={1.5} />
                     <span className="font-medium text-[13.5px]">Logout</span>
                 </button>

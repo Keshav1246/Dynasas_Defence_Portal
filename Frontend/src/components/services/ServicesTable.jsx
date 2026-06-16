@@ -84,13 +84,7 @@ const ServicesTable = ({ services, onEdit, onDelete, onView }) => {
               </tr>
             ))}
             
-            {services.length === 0 && (
-              <tr>
-                <td colSpan="7" className="px-6 py-12 text-center text-gray-500">
-                  No services found.
-                </td>
-              </tr>
-            )}
+
           </tbody>
         </table>
       </div>

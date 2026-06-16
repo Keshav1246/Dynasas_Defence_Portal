@@ -223,6 +223,7 @@ const ContactInquiries = () => {
               limit={paginationData.limit}
               onPageChange={handlePageChange}
               isLoading={loading}
+              className="border-t border-gray-100 mt-4"
             />
           )}
         </div>
