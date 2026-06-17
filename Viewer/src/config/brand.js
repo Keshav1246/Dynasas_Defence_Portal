@@ -1,8 +1,8 @@
 export const brand = {
   companyName: "Dynasas",
 
-  logo: "/assets/logo.jpeg",
-  favicon: "/assets/favicon.png",
+  logo: "/assets/logo.png",
+  favicon: "/assets/Dynasas-favicon.png",
 
   colors: {
     primary: "#FF6A00",

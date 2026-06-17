@@ -19,7 +19,7 @@ const Header = ({ siteData }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const logoUrl = getLogo(siteData, true); // true for isDark background
+  const logoUrl = '/assets/logo.png';
 
   return (
     <>
