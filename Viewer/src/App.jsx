@@ -12,6 +12,7 @@ import ServiceDetailPage from './pages/ServiceDetailPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import PartnersPage from './pages/PartnersPage';
+import SolutionsPage from './pages/SolutionsPage';
 
 function AppContent() {
   const { isLoading, content } = useWebsiteContent();
@@ -70,15 +71,17 @@ function AppContent() {
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/services/:slug" element={<ServiceDetailPage />} />
                 <Route path="/partners" element={<PartnersPage />} />
-                
+                <Route path="/solutions" element={<SolutionsPage />} />
+
                 {/* Fallback for other non-implemented routes yet */}
                 <Route path="*" element={<HomePage />} />
-              </Routes>
-            </BrowserRouter>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+              </Routes >
+            </BrowserRouter >
+          </div >
+        </motion.div >
+      )
+      }
+    </AnimatePresence >
   );
 }
 
