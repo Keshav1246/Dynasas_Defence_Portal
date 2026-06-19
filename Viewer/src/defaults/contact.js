@@ -1,3 +1,5 @@
+import { DEFAULT_ASSETS } from './assets';
+
 export const DEFAULT_CONTACT = {
   generalEmail: 'general@dynasas.com',
   securityEmail: 'security@dynasas.com',
@@ -16,7 +18,7 @@ export const DEFAULT_CONTACT = {
     description: 'Establish a secure channel with our strategic relations team. Whether for defense procurement, partnership inquiries, or general information, we are ready to assist.',
     primaryCTA: 'Contact',
     secondaryCTA: 'Headquarters',
-    image: 'https://media.gettyimages.com/id/1146898776/photo/american-soldier-in-headquarter-control-center.jpg?s=170667a&w=gi&k=20&c=7Zz7DEtI4voQ3Ae0Fy94HprA4yLC3QiToYzGst_o4G4=',
+    image: DEFAULT_ASSETS.CONTACT_HERO_BACKGROUND,
     headquartersUrl: 'https://www.google.com/maps/search/?api=1&query='
   },
   info: {

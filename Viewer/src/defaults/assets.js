@@ -1,6 +1,6 @@
 export const DEFAULT_ASSETS = {
   // Brand
-  PRIMARY_LOGO: '/assets/logo.png', 
+  PRIMARY_LOGO: '/assets/logo.png',
   DARK_LOGO: '/assets/logo.png',
   FAVICON: '/assets/Dynasas-favicon.png',
 
@@ -10,7 +10,7 @@ export const DEFAULT_ASSETS = {
   LOGO_PLACEHOLDER: 'https://ui-avatars.com/api/?name=Partner&background=111318&color=fff',
 
   // Hero Backgrounds
-  HERO_BACKGROUND: 'https://images.unsplash.com/photo-1506469717960-433cebe3f181?auto=format&fit=crop&q=80',
+  HERO_BACKGROUND: 'https://imgs.search.brave.com/SMhWDBGdqQJWA0dSMO4udedx5vJ7BsgYei9nvi-mGiw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzE4Lzg2LzkzLzA0/LzM2MF9GXzE4ODY5/MzA0NzNfclc0WUpW/cU8yR0hYeTgxa0gy/RFVJc0ZTVFlkYWN0/YTkuanBn',
   ABOUT_HERO_BACKGROUND: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80',
-  CONTACT_HERO_BACKGROUND: 'https://images.unsplash.com/photo-1517420704952-d9f39740e074?auto=format&fit=crop&q=80',
+  CONTACT_HERO_BACKGROUND: 'https://imgs.search.brave.com/SMhWDBGdqQJWA0dSMO4udedx5vJ7BsgYei9nvi-mGiw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzE4Lzg2LzkzLzA0/LzM2MF9GXzE4ODY5/MzA0NzNfclc0WUpW/cU8yR0hYeTgxa0gy/RFVJc0ZTVFlkYWN0/YTkuanBn',
 };

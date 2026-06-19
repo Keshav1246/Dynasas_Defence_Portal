@@ -255,8 +255,6 @@ module.exports = {
   getFooterContent,
   createFooterContent,
   updateFooterContent,
-};
-// Trigger reload
   getServicesPageContent,
   createServicesPageContent,
   updateServicesPageContent,

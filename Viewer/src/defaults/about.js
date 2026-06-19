@@ -1,3 +1,5 @@
+import { DEFAULT_ASSETS } from './assets';
+
 export const DEFAULT_ABOUT = {
   companyName: 'Dynasas',
   foundedYear: '1998',
@@ -16,7 +18,7 @@ export const DEFAULT_ABOUT = {
       text: 'Contact',
       link: '/contact'
     },
-    bgImage: 'https://images.unsplash.com/photo-1544256718-3bcf237f3974?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+    bgImage: DEFAULT_ASSETS.ABOUT_HERO_BACKGROUND
   },
 
   // Sections not yet in CMS but hardcoded in UI

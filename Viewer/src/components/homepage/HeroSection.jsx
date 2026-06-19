@@ -24,7 +24,7 @@ const HeroSection = ({ data }) => {
           </video>
         ) : !imgError ? (
           <img
-            src="/assets/hero/hero-bg.jpg"
+            src={data.backgroundImage}
             alt="Hero Background"
             className="w-full h-full object-cover"
             onError={() => setImgError(true)}
