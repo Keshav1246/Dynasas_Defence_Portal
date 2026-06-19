@@ -27,7 +27,7 @@ const PartnersSection = ({ data }) => {
                   <img 
                     src={partner.logo} 
                     alt={partner.name} 
-                    className="max-h-full max-w-full object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 invert"
+                    className="max-h-full max-w-full object-contain transition-all duration-500"
                   />
                 ) : (
                   <span className="font-bold text-brand-white/50 group-hover:text-brand-primary transition-colors text-center text-sm font-heading">

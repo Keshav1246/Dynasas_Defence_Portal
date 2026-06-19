@@ -206,6 +206,8 @@ model Service {
   description  String
   image        String?
   features     String[]
+  hasSubservices Boolean  @default(false)
+  subservices    Json?
   ctaText      String?
   ctaLink      String?
   status       String   @default("published")

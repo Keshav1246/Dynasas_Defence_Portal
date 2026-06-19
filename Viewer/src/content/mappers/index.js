@@ -91,8 +91,9 @@ export const mapServicesData = (homepage, services) => {
             : [],
 
           ctaText: s.ctaText || null,
-
           ctaLink: s.ctaLink || null,
+          hasSubservices: s.hasSubservices || false,
+          subservices: Array.isArray(s.subservices) ? s.subservices : [],
         }))
       : DEFAULT_SERVICES;
 

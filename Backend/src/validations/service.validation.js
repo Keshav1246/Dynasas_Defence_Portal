@@ -15,6 +15,10 @@ const createServiceSchema = z.object({
 
   features: z.array(z.string()).optional(),
 
+  hasSubservices: z.boolean().optional(),
+
+  subservices: z.any().optional(),
+
   ctaText: z.string().optional(),
 
   ctaLink: z.string().optional(),

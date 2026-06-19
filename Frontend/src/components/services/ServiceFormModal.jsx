@@ -28,13 +28,20 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
       image: '',
       status: 'draft',
       isActive: true,
-      displayOrder: 0
+      displayOrder: 0,
+      status: 'published',
+      subservices: []
     }
   });
 
   const { fields: featureFields, append: appendFeature, remove: removeFeature } = useFieldArray({
     control,
     name: "features"
+  });
+
+  const { fields: subserviceFields, append: appendSubservice, remove: removeSubservice, move: moveSubservice } = useFieldArray({
+    control,
+    name: "subservices"
   });
 
   const imageUrl = watch('image');
@@ -58,7 +65,9 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
           image: service.image || '',
           status: service.status,
           isActive: service.isActive !== undefined ? service.isActive : true,
-          displayOrder: service.displayOrder
+          displayOrder: service.displayOrder,
+          status: service.status || 'published',
+          subservices: service.subservices || []
         });
       } else {
         reset({
@@ -71,7 +80,9 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
           image: '',
           status: 'draft',
           isActive: true,
-          displayOrder: 0
+          displayOrder: 0,
+          status: 'published',
+          subservices: []
         });
       }
       setActiveTab('basic');
@@ -88,7 +99,25 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
          data.features = data.features.map(f => typeof f === 'object' ? f.value : f);
       }
       
-      await onSave(data);
+      const isIntelli = data.title && data.title.trim().toLowerCase() === 'intell(i)';
+      
+      if (!isIntelli) {
+         data.subservices = [];
+      } else {
+         // Sort subservices by display order
+         if (data.subservices && Array.isArray(data.subservices)) {
+           data.subservices.sort((a, b) => (parseInt(a.displayOrder) || 0) - (parseInt(b.displayOrder) || 0));
+           // convert subservice features to array of strings if they are objects
+           data.subservices.forEach(sub => {
+              if (sub.features && Array.isArray(sub.features)) {
+                 sub.features = sub.features.map(f => typeof f === 'object' ? f.value : f);
+              }
+           });
+         }
+      }
+      
+      const { hasSubservices, ...payload } = data;
+      await onSave(payload);
       onClose();
     } catch (err) {
       console.error(err);
@@ -96,11 +125,18 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
     }
   };
 
+  const titleValue = watch('title');
+  const isIntelli = titleValue && titleValue.trim().toLowerCase() === 'intell(i)';
+
   const tabs = [
     { id: 'basic', label: 'Basic Info' },
     { id: 'media', label: 'Visual Media' },
     { id: 'settings', label: 'Settings' }
   ];
+
+  if (isIntelli) {
+    tabs.push({ id: 'subservices', label: 'Manage Subservices' });
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
@@ -393,6 +429,124 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
 
               </div>
             </div>
+
+            {/* Subservices Tab */}
+            {isIntelli && (
+              <div className={activeTab === 'subservices' ? 'block' : 'hidden'}>
+                <div className="space-y-6 pb-32">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Manage Subservices</h3>
+                      <p className="text-sm text-gray-500">Configure child services under Intell(i)</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => appendSubservice({ title: '', subtitle: '', description: '', features: [], image: '', ctaText: '', ctaLink: '', displayOrder: subserviceFields.length })}
+                      className="px-4 py-2 text-sm font-semibold text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-lg flex items-center gap-2 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" /> Add Subservice
+                    </button>
+                  </div>
+
+                  {subserviceFields.length === 0 ? (
+                    <div className="text-center py-10 bg-gray-50 border border-gray-200 border-dashed rounded-xl">
+                      <p className="text-gray-500 font-medium">No subservices added yet.</p>
+                      <p className="text-sm text-gray-400 mt-1">Click the button above to add the first subservice.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-8">
+                      {subserviceFields.map((field, index) => (
+                        <div key={field.id} className="p-5 border border-gray-200 rounded-xl bg-white shadow-sm relative">
+                          <div className="absolute top-4 right-4 flex items-center gap-2">
+                             <button
+                                type="button"
+                                onClick={() => removeSubservice(index)}
+                                className="p-1.5 text-gray-400 hover:text-rose-500 bg-gray-50 hover:bg-rose-50 rounded-lg transition-colors"
+                             >
+                                <Trash2 className="w-4 h-4" />
+                             </button>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 mb-5 border-b border-gray-100 pb-4">
+                            <span className="w-6 h-6 flex items-center justify-center bg-gray-100 text-gray-500 text-xs font-bold rounded-full">
+                              {index + 1}
+                            </span>
+                            <h4 className="font-semibold text-gray-800">Subservice Details</h4>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <label className="block mb-1 text-xs font-semibold text-gray-600">Title</label>
+                              <input
+                                {...register(`subservices.${index}.title`)}
+                                className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                placeholder="Subservice Title"
+                              />
+                            </div>
+                            <div>
+                              <label className="block mb-1 text-xs font-semibold text-gray-600">Subtitle</label>
+                              <input
+                                {...register(`subservices.${index}.subtitle`)}
+                                className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                placeholder="Optional Subtitle"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="mb-4">
+                            <label className="block mb-1 text-xs font-semibold text-gray-600">Description</label>
+                            <textarea
+                              {...register(`subservices.${index}.description`)}
+                              rows={2}
+                              className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                              placeholder="Description"
+                            />
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                             <div>
+                               <label className="block mb-1 text-xs font-semibold text-gray-600">Image URL</label>
+                               <input
+                                 {...register(`subservices.${index}.image`)}
+                                 className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                 placeholder="/assets/services/..."
+                               />
+                             </div>
+                             <div>
+                               <label className="block mb-1 text-xs font-semibold text-gray-600">Display Order</label>
+                               <input
+                                 type="number"
+                                 {...register(`subservices.${index}.displayOrder`)}
+                                 className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                               />
+                             </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block mb-1 text-xs font-semibold text-gray-600">CTA Text</label>
+                              <input
+                                {...register(`subservices.${index}.ctaText`)}
+                                className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                placeholder="Explore"
+                              />
+                            </div>
+                            <div>
+                              <label className="block mb-1 text-xs font-semibold text-gray-600">CTA Link</label>
+                              <input
+                                {...register(`subservices.${index}.ctaLink`)}
+                                className="w-full px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-orange-500 outline-none"
+                                placeholder="/contact"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
           </form>
         </div>

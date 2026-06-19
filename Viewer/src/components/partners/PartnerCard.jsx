@@ -27,7 +27,7 @@ const PartnerCard = ({ partner, index }) => {
           <img 
             src={partner.logo} 
             alt={partner.name} 
-            className="max-h-full max-w-[70%] object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 invert"
+            className="max-h-full max-w-[70%] object-contain transition-all duration-500"
           />
         ) : (
           <span className="text-xl font-bold font-heading text-brand-white/80 group-hover:text-brand-primary transition-colors">

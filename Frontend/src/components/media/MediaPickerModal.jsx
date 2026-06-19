@@ -56,7 +56,7 @@ const MediaPickerModal = ({ isOpen, onClose, onSelect, title = "Select Media" })
   };
 
   const handleSelect = (item) => {
-    onSelect(item.url);
+    onSelect(item.fileUrl);
     onClose();
   };
 
@@ -150,7 +150,7 @@ const MediaPickerModal = ({ isOpen, onClose, onSelect, title = "Select Media" })
                   onClick={() => handleSelect(item)}
                   className="flex items-center gap-4 px-4 py-3 bg-white border border-gray-100 rounded-xl cursor-pointer hover:border-[#F97316] hover:shadow-sm transition-all"
                 >
-                  <img src={item.url} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-50" />
+                  <img src={item.fileUrl} alt="" className="w-10 h-10 rounded-lg object-cover bg-gray-50" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-gray-900 truncate">{item.originalName || item.fileName}</p>
                   </div>

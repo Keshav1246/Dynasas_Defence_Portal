@@ -14,7 +14,7 @@ class InquiryController {
   submitContact = async (req, res, next) => {
     try {
       const payload = { ...req.body };
-      
+
       // Auto-generate subject if missing
       if (!payload.subject) {
         payload.subject = `New Inquiry from ${payload.fullName}`;
@@ -186,7 +186,7 @@ class InquiryController {
 
       const updatedInquiry = await inquiryService.assignInquiry(id, assignedTeam);
 
-      // Email Delivery Verification Logging (Option B)
+      // Email Delivery Verification Logging 
       const recipientEmail = "kushal.arora77@gmail.com";
       const prisma = require('../config/prisma');
 

@@ -43,6 +43,11 @@ const getAllServices = async (req, res, next) => {
       },
     });
 
+    const serializedServices = services.map(s => ({
+      ...s,
+      hasSubservices: Array.isArray(s.subservices) && s.subservices.length > 0
+    }));
+
     res.status(200).json({
       success: true,
 
@@ -60,7 +65,7 @@ const getAllServices = async (req, res, next) => {
         archived: archivedCount
       },
 
-      data: services,
+      data: serializedServices,
     });
   } catch (error) {
     logger.error(error.message);
@@ -82,7 +87,10 @@ const getServiceById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: service,
+      data: {
+        ...service,
+        hasSubservices: Array.isArray(service.subservices) && service.subservices.length > 0
+      },
     });
   } catch (error) {
     logger.error(error.message);
@@ -92,8 +100,9 @@ const getServiceById = async (req, res, next) => {
 
 const createService = async (req, res, next) => {
   try {
+    const { hasSubservices, ...dataPayload } = req.body;
     const service = await prisma.service.create({
-      data: req.body,
+      data: dataPayload,
     });
 
     res.status(201).json({
@@ -116,10 +125,11 @@ const createService = async (req, res, next) => {
 const updateService = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { hasSubservices, ...dataPayload } = req.body;
 
     const service = await prisma.service.update({
       where: { id },
-      data: req.body,
+      data: dataPayload,
     });
 
     res.status(200).json({

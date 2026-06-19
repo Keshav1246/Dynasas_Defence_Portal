@@ -78,22 +78,28 @@ export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => 
         <div className="space-y-5">
           <div>
             <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Partner Logo</Label>
-            <div onClick={openPicker} className="mt-1 flex justify-center px-6 pt-6 pb-6 border-2 border-gray-200 border-dashed rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group relative">
-              <div className="space-y-2 text-center">
-                <UploadCloud className="mx-auto h-8 w-8 text-gray-300 group-hover:text-orange-400 transition-colors" />
-                <div className="flex text-sm text-gray-700 justify-center font-medium">
-                  <span>Select logo from Media Library</span>
+            <div className="mt-1 flex flex-col justify-center px-6 pt-6 pb-6 border-2 border-gray-200 border-dashed rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group relative">
+              {formData.logo ? (
+                <div className="flex flex-col items-center w-full">
+                  <div className="relative" onClick={openPicker}>
+                    <img src={formData.logo} alt="Preview" className="h-20 object-contain mb-3 bg-white border border-gray-100 rounded p-2 shadow-sm" />
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium truncate w-full text-center max-w-[200px] mb-2">{formData.logo.split('/').pop()}</span>
+                  <div className="flex items-center gap-4">
+                    <button type="button" onClick={openPicker} className="text-[11px] font-bold text-gray-500 hover:text-gray-700 uppercase tracking-wider">Change</button>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setFormData(prev => ({ ...prev, logo: '' })); }} className="text-[11px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
+                  </div>
                 </div>
-                <p className="text-[11px] text-gray-400 font-medium tracking-wide">SVG, PNG — transparent background</p>
-              </div>
+              ) : (
+                <div className="space-y-2 text-center w-full" onClick={openPicker}>
+                  <UploadCloud className="mx-auto h-8 w-8 text-gray-300 group-hover:text-orange-400 transition-colors" />
+                  <div className="flex text-sm text-gray-700 justify-center font-medium">
+                    <span>Select logo from Media Library</span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 font-medium tracking-wide">SVG, PNG — transparent background</p>
+                </div>
+              )}
             </div>
-            {formData.logo && (
-              <div className="mt-2 flex items-center gap-2">
-                <img src={formData.logo} alt="Logo" className="h-8 object-contain bg-gray-50 rounded border border-gray-100 p-1" />
-                <span className="text-xs text-gray-500 truncate flex-1">{formData.logo.split('/').pop()}</span>
-                <button type="button" onClick={() => setFormData(prev => ({ ...prev, logo: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
-              </div>
-            )}
           </div>
 
           <div>
