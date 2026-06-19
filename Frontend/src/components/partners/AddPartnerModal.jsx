@@ -4,10 +4,10 @@ import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Select } from '../ui/Select';
 import { Label } from '../ui/Label';
-import { FileUpload } from '../ui/FileUpload';
 import { Button } from '../ui/Button';
-import { uploadFile } from '../../api/mediaApi';
 import toast from 'react-hot-toast';
+import { UploadCloud } from 'lucide-react';
+import MediaPickerModal from '../media/MediaPickerModal';
 
 export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => {
   const [formData, setFormData] = useState({
@@ -19,6 +19,7 @@ export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => 
     displayOrder: 0
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pickerState, setPickerState] = useState({ isOpen: false });
 
   useEffect(() => {
     if (isOpen) {
@@ -49,23 +50,12 @@ export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => 
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const handleMediaSelect = (url) => {
+    setFormData(prev => ({ ...prev, logo: url }));
+  };
 
-  const handleLogoUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploadingLogo(true);
-      const uploaded = await uploadFile(file);
-      const url = uploaded.fileUrl || '';
-      setFormData(prev => ({ ...prev, logo: url }));
-      toast.success('Logo uploaded successfully');
-    } catch (err) {
-      toast.error('Failed to upload logo: ' + err.message);
-    } finally {
-      setIsUploadingLogo(false);
-    }
+  const openPicker = () => {
+    setPickerState({ isOpen: true });
   };
 
   const handleSave = async () => {
@@ -88,16 +78,20 @@ export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => 
         <div className="space-y-5">
           <div>
             <Label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2">Partner Logo</Label>
-            <FileUpload 
-              label={isUploadingLogo ? 'Uploading...' : 'Upload partner logo'}
-              helperText="SVG, PNG — transparent background"
-              className="mt-1"
-              onChange={handleLogoUpload}
-              disabled={isUploadingLogo}
-            />
+            <div onClick={openPicker} className="mt-1 flex justify-center px-6 pt-6 pb-6 border-2 border-gray-200 border-dashed rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group relative">
+              <div className="space-y-2 text-center">
+                <UploadCloud className="mx-auto h-8 w-8 text-gray-300 group-hover:text-orange-400 transition-colors" />
+                <div className="flex text-sm text-gray-700 justify-center font-medium">
+                  <span>Select logo from Media Library</span>
+                </div>
+                <p className="text-[11px] text-gray-400 font-medium tracking-wide">SVG, PNG — transparent background</p>
+              </div>
+            </div>
             {formData.logo && (
-              <div className="mt-2 text-xs text-green-600 font-medium bg-green-50 px-2 py-1 inline-block rounded">
-                Logo uploaded
+              <div className="mt-2 flex items-center gap-2">
+                <img src={formData.logo} alt="Logo" className="h-8 object-contain bg-gray-50 rounded border border-gray-100 p-1" />
+                <span className="text-xs text-gray-500 truncate flex-1">{formData.logo.split('/').pop()}</span>
+                <button type="button" onClick={() => setFormData(prev => ({ ...prev, logo: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
               </div>
             )}
           </div>
@@ -164,6 +158,13 @@ export const AddPartnerModal = ({ isOpen, onClose, onSave, editingPartner }) => 
           {editingPartner ? 'Update Partner' : 'Save Partner'}
         </Button>
       </ModalFooter>
+
+      <MediaPickerModal 
+        isOpen={pickerState.isOpen}
+        title="Select Partner Logo"
+        onClose={() => setPickerState({ isOpen: false })}
+        onSelect={handleMediaSelect}
+      />
     </Modal>
   );
 };

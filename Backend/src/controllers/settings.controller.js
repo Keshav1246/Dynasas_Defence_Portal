@@ -74,6 +74,9 @@ const updateSettings = async (req, res, next) => {
     if (body.portalName !== undefined || body.siteName !== undefined || body.siteDescription !== undefined || body.supportEmail !== undefined || body.supportPhone !== undefined || body.defaultLanguage !== undefined || body.timezone !== undefined || body.maintenanceMode !== undefined) {
       actions.push('Updated site settings');
     }
+    if (body.seoTitle !== undefined || body.seoDescription !== undefined || body.seoKeywords !== undefined || body.seoOgImage !== undefined || body.seoTwitterImage !== undefined) {
+      actions.push('Updated SEO settings');
+    }
 
     if (actions.length === 0) actions.push('Updated settings');
 

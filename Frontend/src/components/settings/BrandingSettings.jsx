@@ -3,10 +3,11 @@ import SectionHeader from '../company-profile/SectionHeader';
 import { UploadCloud, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PortalColorPicker from './PortalColorPicker';
+import MediaPickerModal from '../media/MediaPickerModal';
 
 const BrandingSettings = ({ data, onSave, isSaving }) => {
   const [formData, setFormData] = useState(data);
-  const [uploadingState, setUploadingState] = useState({ primaryLogo: false, darkLogo: false, favicon: false });
+  const [pickerState, setPickerState] = useState({ isOpen: false, field: null, title: '' });
 
   useEffect(() => {
     setFormData(data);
@@ -21,35 +22,14 @@ const BrandingSettings = ({ data, onSave, isSaving }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = async (e, field) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploadingState(prev => ({ ...prev, [field]: true }));
-      const uploadData = new FormData();
-      uploadData.append('file', file);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/v1/media/upload', {
-        method: 'POST',
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        },
-        body: uploadData,
-      });
-
-      if (!response.ok) throw new Error('Failed to upload file');
-      const result = await response.json();
-      const fileUrl = result.data?.fileUrl || result.fileUrl;
-      
-      setFormData(prev => ({ ...prev, [field]: fileUrl }));
-      toast.success('File uploaded successfully');
-    } catch (error) {
-      toast.error(error.message || 'Error uploading file');
-    } finally {
-      setUploadingState(prev => ({ ...prev, [field]: false }));
+  const handleMediaSelect = (url) => {
+    if (pickerState.field) {
+      setFormData(prev => ({ ...prev, [pickerState.field]: url }));
     }
+  };
+
+  const openPicker = (field, title) => {
+    setPickerState({ isOpen: true, field, title });
   };
 
   const isDirty = JSON.stringify(data) !== JSON.stringify(formData);
@@ -100,45 +80,41 @@ const BrandingSettings = ({ data, onSave, isSaving }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">PRIMARY LOGO</label>
-            <label className="flex justify-center px-6 py-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
+            <div onClick={() => openPicker('primaryLogo', 'Select Primary Logo')} className="flex justify-center px-6 py-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
               <div className="space-y-2 text-center">
-                {uploadingState.primaryLogo ? (
-                  <Loader2 className="mx-auto h-7 w-7 text-orange-500 animate-spin" />
-                ) : (
-                  <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
-                )}
+                <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
                 <div className="flex text-[13px] text-gray-700 justify-center font-medium">
-                  <span>{uploadingState.primaryLogo ? 'Uploading...' : 'Upload logo'}</span>
+                  <span>Select from Media Library</span>
                 </div>
                 <p className="text-[11px] text-gray-400 font-medium">SVG or PNG &mdash; transparent bg</p>
               </div>
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'primaryLogo')} disabled={uploadingState.primaryLogo} />
-            </label>
+            </div>
             {formData.primaryLogo && (
-              <div className="mt-2 text-xs text-green-600 font-medium truncate">
-                Current: {formData.primaryLogo}
+              <div className="mt-2 flex items-center gap-2">
+                <img src={formData.primaryLogo} alt="Primary Logo" className="h-8 object-contain bg-gray-50 rounded border border-gray-100 p-1" />
+                <span className="text-xs text-gray-500 truncate flex-1">{formData.primaryLogo.split('/').pop()}</span>
+                <button onClick={() => setFormData(prev => ({ ...prev, primaryLogo: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
               </div>
             )}
           </div>
           <div>
             <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">LOGO (DARK BACKGROUND)</label>
-            <label className="flex justify-center px-6 py-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
+            <div onClick={() => openPicker('darkLogo', 'Select Dark Logo')} className="flex justify-center px-6 py-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
               <div className="space-y-2 text-center">
-                {uploadingState.darkLogo ? (
-                  <Loader2 className="mx-auto h-7 w-7 text-orange-500 animate-spin" />
-                ) : (
-                  <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
-                )}
+                <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
                 <div className="flex text-[13px] text-gray-700 justify-center font-medium">
-                  <span>{uploadingState.darkLogo ? 'Uploading...' : 'Upload logo'}</span>
+                  <span>Select from Media Library</span>
                 </div>
                 <p className="text-[11px] text-gray-400 font-medium">SVG or PNG &mdash; transparent bg</p>
               </div>
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'darkLogo')} disabled={uploadingState.darkLogo} />
-            </label>
+            </div>
             {formData.darkLogo && (
-              <div className="mt-2 text-xs text-green-600 font-medium truncate">
-                Current: {formData.darkLogo}
+              <div className="mt-2 flex items-center gap-2">
+                <div className="bg-gray-900 rounded p-1 border border-gray-800">
+                  <img src={formData.darkLogo} alt="Dark Logo" className="h-6 object-contain" />
+                </div>
+                <span className="text-xs text-gray-500 truncate flex-1">{formData.darkLogo.split('/').pop()}</span>
+                <button onClick={() => setFormData(prev => ({ ...prev, darkLogo: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
               </div>
             )}
           </div>
@@ -147,23 +123,20 @@ const BrandingSettings = ({ data, onSave, isSaving }) => {
         {/* Favicon Upload */}
         <div>
           <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">FAVICON</label>
-          <label className="flex justify-center px-6 py-10 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
+          <div onClick={() => openPicker('favicon', 'Select Favicon')} className="flex justify-center px-6 py-10 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
             <div className="space-y-2 text-center">
-              {uploadingState.favicon ? (
-                <Loader2 className="mx-auto h-7 w-7 text-orange-500 animate-spin" />
-              ) : (
-                <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
-              )}
+              <UploadCloud className="mx-auto h-7 w-7 text-gray-300 group-hover:text-gray-400 transition-colors" />
               <div className="flex text-[13px] text-gray-700 justify-center font-medium">
-                <span>{uploadingState.favicon ? 'Uploading...' : 'Upload favicon'}</span>
+                <span>Select from Media Library</span>
               </div>
               <p className="text-[11px] text-gray-400 font-medium">ICO or PNG &mdash; 32&times;32 or 64&times;64px</p>
             </div>
-            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'favicon')} disabled={uploadingState.favicon} />
-          </label>
+          </div>
           {formData.favicon && (
-            <div className="mt-2 text-xs text-green-600 font-medium truncate">
-              Current: {formData.favicon}
+            <div className="mt-2 flex items-center gap-2">
+              <img src={formData.favicon} alt="Favicon" className="h-8 w-8 object-contain bg-gray-50 rounded border border-gray-100 p-1" />
+              <span className="text-xs text-gray-500 truncate flex-1">{formData.favicon.split('/').pop()}</span>
+              <button onClick={() => setFormData(prev => ({ ...prev, favicon: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
             </div>
           )}
         </div>
@@ -194,6 +167,13 @@ const BrandingSettings = ({ data, onSave, isSaving }) => {
         </div>
 
       </div>
+
+      <MediaPickerModal 
+        isOpen={pickerState.isOpen}
+        title={pickerState.title}
+        onClose={() => setPickerState({ isOpen: false, field: null, title: '' })}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 };

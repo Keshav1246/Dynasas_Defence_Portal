@@ -273,6 +273,13 @@ model Settings {
   timezone        String? @default("Asia/Kolkata")
   maintenanceMode Boolean @default(false)
 
+  // SEO Settings
+  seoTitle        String?
+  seoDescription  String?
+  seoKeywords     String?
+  seoOgImage      String?
+  seoTwitterImage String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

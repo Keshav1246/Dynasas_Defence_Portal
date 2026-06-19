@@ -6,8 +6,8 @@ import MissionSection from '../components/company-profile/MissionSection';
 import VisionSection from '../components/company-profile/VisionSection';
 import StatisticsSection from '../components/company-profile/StatisticsSection';
 import ContactSection from '../components/company-profile/ContactSection';
-import { 
-  getCompanyProfile, 
+import {
+  getCompanyProfile,
   updateCompanyProfile,
   createCompanyProfile,
   createStatistic, updateStatistic, deleteStatistic,
@@ -27,7 +27,7 @@ const CompanyProfilePage = () => {
     try {
       setError(null);
       const data = await getCompanyProfile() || {};
-      
+
       // Map flat backend model to nested frontend UI structure
       setProfileData({
         id: data.id || null,
@@ -78,7 +78,7 @@ const CompanyProfilePage = () => {
 
   const handleSaveSection = async (sectionKey, sectionData) => {
     if (!profileData) return;
-    
+
     // If no profile exists yet, only allow saving the About section to create it
     if (!profileData.id && sectionKey !== 'about') {
       toast.error('Please save the About section first to initialize your company profile.');
@@ -110,7 +110,7 @@ const CompanyProfilePage = () => {
 
         // Save Mission Pillars (Dirty tracking)
         const { newItems, modifiedItems, deletedIds } = sectionData.pillarsData;
-        
+
         for (const item of newItems) {
           await createPillar({ text: item.text, companyProfileId: profileData.id });
         }
@@ -129,7 +129,7 @@ const CompanyProfilePage = () => {
         });
       } else if (sectionKey === 'statistics') {
         const { newItems, modifiedItems, deletedIds } = sectionData;
-        
+
         for (const item of newItems) {
           await createStatistic({ value: item.value, label: item.label, companyProfileId: profileData.id });
         }
@@ -163,7 +163,7 @@ const CompanyProfilePage = () => {
     if (!profileData) return null;
 
     const props = { onSave: handleSaveSection, disabled: isSaving };
-    
+
     switch (activeSection) {
       case 'about':
         return <AboutSection data={profileData.about} {...props} />;
@@ -192,7 +192,7 @@ const CompanyProfilePage = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[400px] gap-4">
         <p className="text-gray-500">{error}</p>
-        <button 
+        <button
           onClick={fetchProfile}
           className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
         >
@@ -210,11 +210,11 @@ const CompanyProfilePage = () => {
       />
 
       <div className="flex flex-col lg:flex-row gap-8 mt-8">
-        <CompanyProfileSidebar 
-          activeSection={activeSection} 
-          onSectionChange={setActiveSection} 
+        <CompanyProfileSidebar
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
         />
-        
+
         <div className={`flex-1 min-w-0 transition-opacity ${isSaving ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
           {renderActiveSection()}
         </div>

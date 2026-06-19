@@ -27,6 +27,36 @@ const SEOManager = ({ seoData }) => {
       }
       linkFavicon.href = `${seoData.favicon}?v=${new Date().getTime()}`;
     }
+
+    if (seoData.keywords) {
+      let metaKeywords = document.querySelector('meta[name="keywords"]');
+      if (!metaKeywords) {
+        metaKeywords = document.createElement('meta');
+        metaKeywords.name = 'keywords';
+        document.head.appendChild(metaKeywords);
+      }
+      metaKeywords.content = seoData.keywords;
+    }
+
+    if (seoData.ogImage) {
+      let metaOgImage = document.querySelector('meta[property="og:image"]');
+      if (!metaOgImage) {
+        metaOgImage = document.createElement('meta');
+        metaOgImage.setAttribute('property', 'og:image');
+        document.head.appendChild(metaOgImage);
+      }
+      metaOgImage.content = seoData.ogImage;
+    }
+
+    if (seoData.twitterImage) {
+      let metaTwitterImage = document.querySelector('meta[name="twitter:image"]');
+      if (!metaTwitterImage) {
+        metaTwitterImage = document.createElement('meta');
+        metaTwitterImage.name = 'twitter:image';
+        document.head.appendChild(metaTwitterImage);
+      }
+      metaTwitterImage.content = seoData.twitterImage;
+    }
   }, [seoData]);
 
   return null;

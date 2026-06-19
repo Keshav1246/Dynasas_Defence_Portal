@@ -3,7 +3,7 @@ const { z } = require("zod");
 const createCompanySchema = z.object({
   companyName: z.string().min(2, "Company name must be at least 2 characters"),
   overview: z.string().min(20, "Overview must be at least 20 characters"),
-  
+
   // New fields
   foundedYear: z.string().optional().nullable(),
   headquarters: z.string().optional().nullable(),

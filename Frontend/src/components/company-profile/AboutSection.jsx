@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import SectionHeader from './SectionHeader';
 import { UploadCloud, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MediaPickerModal from '../media/MediaPickerModal';
 
 const AboutSection = ({ data, onSave }) => {
   const [formData, setFormData] = useState(data);
-  const [isUploading, setIsUploading] = useState(false);
+  const [pickerState, setPickerState] = useState({ isOpen: false });
 
   useEffect(() => {
     setFormData(data);
@@ -16,39 +17,12 @@ const AboutSection = ({ data, onSave }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleMediaSelect = (url) => {
+    setFormData(prev => ({ ...prev, logoUrl: url }));
+  };
 
-    try {
-      setIsUploading(true);
-      const uploadData = new FormData();
-      uploadData.append('file', file);
-
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-      const response = await fetch('http://localhost:5001/api/v1/media/upload', {
-        method: 'POST',
-        headers,
-        body: uploadData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
-
-      const result = await response.json();
-      const fileUrl = result.data?.fileUrl || result.fileUrl;
-      
-      setFormData(prev => ({ ...prev, logoUrl: fileUrl }));
-      toast.success('Logo uploaded successfully');
-    } catch (error) {
-      toast.error(error.message || 'Error uploading logo');
-    } finally {
-      setIsUploading(false);
-      e.target.value = ''; // Reset input
-    }
+  const openPicker = () => {
+    setPickerState({ isOpen: true });
   };
 
   const [errors, setErrors] = useState({});
@@ -151,23 +125,25 @@ const AboutSection = ({ data, onSave }) => {
                 <img src={formData.logoUrl} alt="Company Logo" className="max-w-full max-h-full object-contain" />
               </div>
             )}
-            <label className={`flex-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-2xl transition-colors ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'} group relative`}>
+            <div onClick={openPicker} className={`flex-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-2xl transition-colors hover:bg-gray-50 cursor-pointer group relative`}>
               <div className="space-y-2 text-center">
-                {isUploading ? (
-                  <Loader2 className="mx-auto h-10 w-10 text-orange-400 animate-spin" />
-                ) : (
-                  <UploadCloud className="mx-auto h-10 w-10 text-gray-300 group-hover:text-orange-400 transition-colors" />
-                )}
+                <UploadCloud className="mx-auto h-10 w-10 text-gray-300 group-hover:text-orange-400 transition-colors" />
                 <div className="flex text-sm text-gray-700 justify-center font-medium">
-                  <span>{isUploading ? 'Uploading...' : (formData.logoUrl ? 'Change company logo' : 'Upload company logo')}</span>
+                  <span>{formData.logoUrl ? 'Change company logo from Media Library' : 'Select company logo from Media Library'}</span>
                 </div>
                 <p className="text-xs text-gray-400 font-medium tracking-wide">JPG, PNG, SVG &mdash; transparent background preferred</p>
               </div>
-              <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
-            </label>
+            </div>
           </div>
         </div>
       </div>
+
+      <MediaPickerModal 
+        isOpen={pickerState.isOpen}
+        title="Select Company Logo"
+        onClose={() => setPickerState({ isOpen: false })}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 };

@@ -81,8 +81,11 @@ export const fetchAllWebsiteContent = async (forceRefresh = false) => {
     
     // Add SEO Data object populated from Settings
     const seoData = {
-      title: siteData?.siteName || 'Dynasas',
-      description: siteData?.siteDescription || 'Advanced Defense & Aerospace Solutions',
+      title: rawSettings.seoTitle || siteData?.siteName || 'Dynasas',
+      description: rawSettings.seoDescription || siteData?.siteDescription || 'Advanced Defense & Aerospace Solutions',
+      keywords: rawSettings.seoKeywords || '',
+      ogImage: rawSettings.seoOgImage || '',
+      twitterImage: rawSettings.seoTwitterImage || '',
       favicon: siteData?.favicon || null
     };
 

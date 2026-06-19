@@ -1,11 +1,12 @@
 import React from 'react';
-import { Palette, LayoutTemplate, Share2, Globe } from 'lucide-react';
+import { Palette, LayoutTemplate, Share2, Globe, Search } from 'lucide-react';
 
 const tabs = [
   { id: "branding", label: "Branding", icon: Palette },
   { id: "footer", label: "Footer Management", icon: LayoutTemplate },
   { id: "social", label: "Social Media Links", icon: Share2 },
-  { id: "portal", label: "Portal Configuration", icon: Globe }
+  { id: "portal", label: "Portal Configuration", icon: Globe },
+  { id: "seo", label: "SEO & Meta", icon: Search }
 ];
 
 const SettingsSidebar = ({ activeTab, onTabChange }) => {

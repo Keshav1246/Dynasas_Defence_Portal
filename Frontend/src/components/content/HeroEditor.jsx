@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, UploadCloud, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import MediaPickerModal from '../media/MediaPickerModal';
 
 const HeroEditor = ({ data, onSave, isSaving }) => {
   const [formData, setFormData] = useState(data);
-  const [isUploading, setIsUploading] = useState(false);
+  const [pickerState, setPickerState] = useState({ isOpen: false });
 
   useEffect(() => {
     setFormData(data);
@@ -15,38 +16,12 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleMediaSelect = (url) => {
+    setFormData(prev => ({ ...prev, heroImage: url }));
+  };
 
-    try {
-      setIsUploading(true);
-      const uploadData = new FormData();
-      uploadData.append('file', file);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5001/api/v1/media/upload', {
-        method: 'POST',
-        headers: {
-          ...(token && { Authorization: `Bearer ${token}` })
-        },
-        body: uploadData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload background media');
-      }
-
-      const result = await response.json();
-      const fileUrl = result.data?.fileUrl || result.fileUrl;
-      
-      setFormData(prev => ({ ...prev, heroImage: fileUrl }));
-      toast.success('Background media uploaded successfully');
-    } catch (error) {
-      toast.error(error.message || 'Error uploading media');
-    } finally {
-      setIsUploading(false);
-    }
+  const openPicker = () => {
+    setPickerState({ isOpen: true });
   };
 
   const [errors, setErrors] = useState({});
@@ -102,7 +77,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
           </button>
           <button 
             onClick={handleSave}
-            disabled={isSaving || isUploading}
+            disabled={isSaving}
             className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors disabled:opacity-70"
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -189,23 +164,26 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
         <div>
           <label className="block mb-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">BACKGROUND MEDIA</label>
-          <label className="flex justify-center px-6 py-10 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
+          <div onClick={openPicker} className="flex justify-center px-6 py-10 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
             <div className="space-y-2 text-center flex flex-col items-center">
-              {isUploading ? (
-                <Loader2 className="h-8 w-8 text-orange-500 animate-spin mb-2" />
-              ) : (
-                <UploadCloud className="mx-auto h-8 w-8 text-gray-300 group-hover:text-gray-400 transition-colors" />
-              )}
+              <UploadCloud className="mx-auto h-8 w-8 text-gray-300 group-hover:text-gray-400 transition-colors" />
               <div className="flex text-sm text-gray-700 justify-center font-medium">
-                <span>{isUploading ? 'Uploading...' : 'Upload background image or video'}</span>
+                <span>Select background image or video from Media Library</span>
               </div>
               <p className="text-xs text-gray-400 font-medium">PNG, JPG, MP4 &mdash; recommended 1920&times;1080</p>
             </div>
-            <input type="file" className="hidden" accept="image/*,video/mp4" onChange={handleFileUpload} disabled={isUploading} />
-          </label>
+          </div>
           {formData.heroImage && (
-            <div className="mt-2 inline-flex px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium border border-green-200">
-              Media uploaded successfully
+            <div className="mt-2 flex items-center gap-2">
+              {formData.heroImage.endsWith('.mp4') ? (
+                <div className="h-12 w-16 bg-black rounded flex items-center justify-center">
+                  <span className="text-xs text-white">VIDEO</span>
+                </div>
+              ) : (
+                <img src={formData.heroImage} alt="Background" className="h-12 object-cover bg-gray-50 rounded border border-gray-100 p-1" />
+              )}
+              <span className="text-xs text-gray-500 truncate flex-1">{formData.heroImage.split('/').pop()}</span>
+              <button onClick={() => setFormData(prev => ({ ...prev, heroImage: '' }))} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider">Remove</button>
             </div>
           )}
         </div>
@@ -260,6 +238,13 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
         </div>
 
       </div>
+
+      <MediaPickerModal 
+        isOpen={pickerState.isOpen}
+        title="Select Background Media"
+        onClose={() => setPickerState({ isOpen: false })}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 };

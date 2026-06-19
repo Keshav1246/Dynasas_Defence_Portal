@@ -1,4 +1,4 @@
-import { 
+import {
   DEFAULT_ASSETS,
   DEFAULT_THEME,
   DEFAULT_SEO,
@@ -48,7 +48,7 @@ export const mapHeroData = (homepage) => {
     heroDescription: withFallback(safeHomepage.heroDescription, DEFAULT_HOMEPAGE.hero.description),
     trustBarItems: withArrayFallback(safeHomepage.trustBarItems, DEFAULT_HOMEPAGE.hero.trustBarItems),
     backgroundImage: DEFAULT_HOMEPAGE.hero.backgroundImage,
-    backgroundVideo: null, 
+    backgroundVideo: null,
     primaryCTA: {
       text: withFallback(safeHomepage.ctaText, DEFAULT_HOMEPAGE.hero.primaryCTA.text),
       link: withFallback(safeHomepage.ctaLink, DEFAULT_HOMEPAGE.hero.primaryCTA.link),
@@ -66,33 +66,33 @@ export const mapServicesData = (homepage, services) => {
   const mappedServices =
     Array.isArray(services) && services.length > 0
       ? services
-          .filter(
-            s =>
-              s.status === 'published' &&
-              (s.isActive === true || s.isActive === undefined)
-          )
-          .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
-          .map((s, index) => ({
-            id: s.id,
-            number: String(index + 1).padStart(2, '0'),
-            title: s.title,
-            description: s.description,
+        .filter(
+          s =>
+            s.status === 'published' &&
+            (s.isActive === true || s.isActive === undefined)
+        )
+        .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+        .map((s, index) => ({
+          id: s.id,
+          number: String(index + 1).padStart(2, '0'),
+          title: s.title,
+          description: s.description,
 
-            image: withFallback(
-              s.image,
-              DEFAULT_ASSETS.IMAGE_PLACEHOLDER
-            ),
+          image: withFallback(
+            s.image,
+            DEFAULT_ASSETS.IMAGE_PLACEHOLDER
+          ),
 
-            subtitle: s.subtitle || null,
+          subtitle: s.subtitle || null,
 
-            features: Array.isArray(s.features)
-              ? s.features
-              : [],
+          features: Array.isArray(s.features)
+            ? s.features
+            : [],
 
-            ctaText: s.ctaText || null,
+          ctaText: s.ctaText || null,
 
-            ctaLink: s.ctaLink || null,
-          }))
+          ctaLink: s.ctaLink || null,
+        }))
       : DEFAULT_SERVICES;
 
   return {
@@ -135,7 +135,7 @@ export const mapAboutData = (profile, pillars) => {
       title: withFallback(safeProfile.missionTitle, DEFAULT_HOMEPAGE.mission.title),
       statement: withFallback(safeProfile.missionStatement, DEFAULT_HOMEPAGE.mission.statement),
       items: withArrayFallback(
-        Array.isArray(pillars) ? pillars.sort((a,b) => (a.displayOrder || 0) - (b.displayOrder || 0)).map(p => p.text) : [],
+        Array.isArray(pillars) ? pillars.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)).map(p => p.text) : [],
         DEFAULT_HOMEPAGE.mission.items
       ),
       listTitle: DEFAULT_HOMEPAGE.mission.listTitle
@@ -163,10 +163,10 @@ export const mapStatisticsData = (homepage, stats) => {
   const safeHomepage = homepage || {};
   const mappedStats = Array.isArray(stats) && stats.length > 0
     ? stats.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)).map(s => ({
-        id: s.id,
-        label: s.label,
-        value: s.value,
-      }))
+      id: s.id,
+      label: s.label,
+      value: s.value,
+    }))
     : DEFAULT_HOMEPAGE.statistics.items;
 
   return {
@@ -179,16 +179,16 @@ export const mapPartnersData = (homepage, partners) => {
   const safeHomepage = homepage || {};
   const mappedPartners = Array.isArray(partners) && partners.length > 0
     ? partners.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)).map(p => ({
-        id: p.id,
-        name: p.name,
-        logo: withFallback(p.logo, DEFAULT_ASSETS.LOGO_PLACEHOLDER),
-        website: withFallback(p.website, '#'),
-        category: p.category || null,
-      }))
+      id: p.id,
+      name: p.name,
+      logo: withFallback(p.logo, DEFAULT_ASSETS.LOGO_PLACEHOLDER),
+      website: withFallback(p.website, '#'),
+      category: p.category || null,
+    }))
     : []; // Partners block can legitimately have empty items, handled by component
 
   return {
-    sectionLabel: withFallback(safeHomepage.partnersSectionLabel, DEFAULT_HOMEPAGE.partners.sectionLabel), 
+    sectionLabel: withFallback(safeHomepage.partnersSectionLabel, DEFAULT_HOMEPAGE.partners.sectionLabel),
     sectionTitle: withFallback(safeHomepage.partnersSectionTitle, DEFAULT_HOMEPAGE.partners.sectionTitle),
     sectionDescription: withFallback(safeHomepage.partnersSectionDescription, DEFAULT_HOMEPAGE.partners.sectionDescription),
     ctaText: withFallback(safeHomepage.partnersButtonText, DEFAULT_HOMEPAGE.partners.ctaText),
@@ -202,6 +202,15 @@ export const mapFooterData = (siteData, footerContent, companyProfile) => {
   const safeSiteData = siteData || {};
   const safeProfile = companyProfile || {};
 
+  const parseLink = (linkString) => {
+    if (!linkString) return { label: '', url: '#' };
+    const parts = linkString.split('|');
+    return {
+      label: parts[0]?.trim() || linkString,
+      url: parts[1]?.trim() || '#'
+    };
+  };
+
   return {
     logo: withFallback(safeSiteData.primaryLogo, DEFAULT_ASSETS.PRIMARY_LOGO),
     tagline: withFallback(safeFooter.footerTagline, DEFAULT_SEO.description),
@@ -212,10 +221,10 @@ export const mapFooterData = (siteData, footerContent, companyProfile) => {
       address: withFallback(safeFooter.address || safeProfile.mailingAddress, DEFAULT_CONTACT.mailingAddress),
     },
     links: {
-      company: withArrayFallback(safeFooter.companyLinks, []),
-      solutions: withArrayFallback(safeFooter.solutionLinks, []),
-      resources: withArrayFallback(safeFooter.resourceLinks, []),
-      legal: withArrayFallback(safeFooter.legalLinks, []),
+      company: withArrayFallback(safeFooter.companyLinks, []).map(parseLink),
+      solutions: withArrayFallback(safeFooter.solutionLinks, []).map(parseLink),
+      resources: withArrayFallback(safeFooter.resourceLinks, []).map(parseLink),
+      legal: withArrayFallback(safeFooter.legalLinks, []).map(parseLink),
     },
     copyright: `© ${new Date().getFullYear()} ${withFallback(safeSiteData.siteName, 'Dynasas')}. All rights reserved.`
   };

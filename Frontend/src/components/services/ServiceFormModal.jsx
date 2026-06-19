@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X, Image as ImageIcon, UploadCloud, Video, Box, ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { serviceSchema } from '../../schemas/serviceSchema';
+import MediaPickerModal from '../media/MediaPickerModal';
 
 const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
   const [activeTab, setActiveTab] = useState('basic');
@@ -42,8 +43,7 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
   
   const [visualType, setVisualType] = useState('image');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [pickerState, setPickerState] = useState({ isOpen: false });
 
   useEffect(() => {
     if (isOpen) {
@@ -74,8 +74,6 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
           displayOrder: 0
         });
       }
-      setSelectedFile(null);
-      setPreviewUrl(service?.image || '');
       setActiveTab('basic');
     }
   }, [isOpen, service, reset]);
@@ -84,27 +82,6 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
 
   const onSubmit = async (data) => {
     try {
-      // If there's a selected file, upload it first
-      if (selectedFile) {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-        
-        const token = localStorage.getItem('token');
-        const uploadRes = await fetch('http://localhost:5001/api/v1/media/upload', {
-          method: 'POST',
-          headers: {
-            ...(token && { Authorization: `Bearer ${token}` })
-          },
-          body: formData
-        });
-        
-        if (!uploadRes.ok) {
-          throw new Error('Image upload failed');
-        }
-        
-        const uploadData = await uploadRes.json();
-        data.image = uploadData.data?.fileUrl || uploadData.fileUrl;
-      }
       
       // Convert features array of objects to array of strings if necessary
       if (data.features && Array.isArray(data.features)) {
@@ -291,49 +268,35 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
                 </div>
 
                 <div>
-                  <label className="block mb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Upload Visual</label>
-                  <label className="mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group relative">
+                  <label className="block mb-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Visual Media</label>
+                  <div onClick={() => setPickerState({ isOpen: true })} className="mt-1 flex justify-center px-6 pt-8 pb-8 border-2 border-gray-200 border-dashed rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group relative">
                     <div className="space-y-2 text-center">
                       <UploadCloud className="mx-auto h-10 w-10 text-gray-300 group-hover:text-orange-400 transition-colors" />
                       <div className="flex text-sm text-gray-700 justify-center font-medium">
-                        <span>Drop file or click to upload</span>
+                        <span>Select media from Library</span>
                       </div>
                       <p className="text-xs text-gray-400 font-medium tracking-wide uppercase mt-1">
-                        {visualType === 'image' && 'PNG, JPG — max 50MB'}
-                        {visualType === 'video' && 'MP4, MOV, WEBM — max 50MB'}
-                        {visualType === '3d' && 'GLB, GLTF — max 50MB'}
+                        {visualType === 'image' && 'PNG, JPG'}
+                        {visualType === 'video' && 'MP4, MOV, WEBM'}
+                        {visualType === '3d' && 'GLB, GLTF'}
                       </p>
                     </div>
-                    <input type="file" className="hidden" 
-                      accept={
-                        visualType === 'image' ? 'image/*' :
-                        visualType === 'video' ? 'video/mp4,video/quicktime,video/webm' :
-                        '.glb,.gltf'
-                      } 
-                      onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setSelectedFile(e.target.files[0]);
-                        setPreviewUrl(URL.createObjectURL(e.target.files[0]));
-                      }
-                    }} />
-                  </label>
-                  {previewUrl && (
+                  </div>
+                  {imageUrl && (
                     <div className="mt-4 relative rounded-xl overflow-hidden border border-gray-200">
                       {visualType === 'video' ? (
-                        <video src={previewUrl} controls className="w-full h-48 object-cover bg-black" />
+                        <video src={imageUrl} controls className="w-full h-48 object-cover bg-black" />
                       ) : visualType === '3d' ? (
                         <div className="w-full h-48 bg-gray-100 flex items-center justify-center flex-col gap-2">
                            <Box className="w-8 h-8 text-gray-400" />
                            <span className="text-sm font-medium text-gray-500">3D Model Selected</span>
                         </div>
                       ) : (
-                        <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover" />
+                        <img src={imageUrl} alt="Preview" className="w-full h-48 object-cover" />
                       )}
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedFile(null);
-                          setPreviewUrl('');
                           setValue('image', '');
                         }}
                         className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full text-gray-600 hover:text-rose-500 shadow-sm"
@@ -454,6 +417,13 @@ const ServiceFormModal = ({ isOpen, onClose, onSave, service }) => {
         </div>
 
       </div>
+
+      <MediaPickerModal 
+        isOpen={pickerState.isOpen}
+        title="Select Visual Media"
+        onClose={() => setPickerState({ isOpen: false })}
+        onSelect={(url) => setValue('image', url, { shouldDirty: true })}
+      />
     </div>
   );
 };

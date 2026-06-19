@@ -22,11 +22,10 @@ const CompanyProfileSidebar = ({ activeSection, onSectionChange }) => {
             <button
               key={item.id}
               onClick={() => onSectionChange(item.id)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${
-                isActive
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all ${isActive
                   ? 'bg-orange-50/80 text-orange-600 border border-orange-200'
                   : 'text-gray-500 hover:bg-gray-100/80 hover:text-gray-900 border border-transparent'
-              }`}
+                }`}
             >
               <Icon className="w-[18px] h-[18px]" strokeWidth={isActive ? 2.5 : 2} />
               {item.label}

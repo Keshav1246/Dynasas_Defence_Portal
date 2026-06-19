@@ -7,6 +7,7 @@ import BrandingSettings from '../components/settings/BrandingSettings';
 import FooterSettings from '../components/settings/FooterSettings';
 import SocialLinksSettings from '../components/settings/SocialLinksSettings';
 import PortalSettings from '../components/settings/PortalSettings';
+import SeoSettings from '../components/settings/SeoSettings';
 import { getSettings, updateSettings } from '../services/settings.service';
 
 const defaultMockData = {
@@ -77,6 +78,13 @@ const SettingsPage = () => {
           defaultLanguage: data.defaultLanguage || 'English',
           timezone: data.timezone || 'Asia/Kolkata',
           maintenanceMode: data.maintenanceMode || false
+        },
+        seo: {
+          seoTitle: data.seoTitle || '',
+          seoDescription: data.seoDescription || '',
+          seoKeywords: data.seoKeywords || '',
+          seoOgImage: data.seoOgImage || '',
+          seoTwitterImage: data.seoTwitterImage || ''
         }
       });
       
@@ -157,6 +165,25 @@ const SettingsPage = () => {
       } finally {
         setIsSaving(false);
       }
+    } else if (sectionKey === 'seo') {
+      try {
+        setIsSaving(true);
+        const payload = {
+          seoTitle: sectionData.seoTitle || '',
+          seoDescription: sectionData.seoDescription || '',
+          seoKeywords: sectionData.seoKeywords || '',
+          seoOgImage: sectionData.seoOgImage || '',
+          seoTwitterImage: sectionData.seoTwitterImage || ''
+        };
+
+        await updateSettings(settingsId, payload);
+        toast.success('SEO settings updated successfully');
+        await fetchSettings();
+      } catch (err) {
+        toast.error(err.message || 'Failed to update SEO settings');
+      } finally {
+        setIsSaving(false);
+      }
     } else {
       console.log(`Save triggered for ${sectionKey}, but saving is disabled in Step 1.`, sectionData);
       toast.success(`Data fetching verified! Save functionality for ${sectionKey} is deferred.`);
@@ -183,7 +210,9 @@ const SettingsPage = () => {
       case 'social':
         return <SocialLinksSettings data={settingsData.social} onSave={handleSaveSettings} />;
       case 'portal':
-        return <PortalSettings data={settingsData.portal} onSave={handleSaveSettings} />;
+        return <PortalSettings data={settingsData.portal} onSave={handleSaveSettings} isSaving={isSaving} />;
+      case 'seo':
+        return <SeoSettings data={settingsData.seo} onSave={handleSaveSettings} isSaving={isSaving} />;
       default:
         return <BrandingSettings data={settingsData.branding} onSave={handleSaveSettings} isSaving={isSaving} />;
     }

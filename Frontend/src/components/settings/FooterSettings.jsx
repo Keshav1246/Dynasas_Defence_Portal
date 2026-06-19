@@ -15,6 +15,20 @@ const defaultData = {
   ]
 };
 
+const parseLinks = (stringLinks) => {
+  if (!stringLinks) return [];
+  return stringLinks.map(str => {
+    const [label = '', url = ''] = str.split('|').map(s => s.trim());
+    return { label, url };
+  });
+};
+
+const serializeLinks = (objLinks) => {
+  return objLinks
+    .filter(link => link.label.trim() !== '')
+    .map(link => `${link.label.trim()}|${link.url.trim()}`);
+};
+
 const FooterSettings = () => {
   const [formData, setFormData] = useState(defaultData);
   const [originalData, setOriginalData] = useState(defaultData);
@@ -33,10 +47,10 @@ const FooterSettings = () => {
           tagline: data.footerTagline || "",
           description: data.footerDescription || "",
           columns: [
-            { id: 'company', title: 'Company', links: data.companyLinks || [] },
-            { id: 'solutions', title: 'Solutions', links: data.solutionLinks || [] },
-            { id: 'resources', title: 'Resources', links: data.resourceLinks || [] },
-            { id: 'legal', title: 'Legal', links: data.legalLinks || [] }
+            { id: 'company', title: 'Company', links: parseLinks(data.companyLinks) },
+            { id: 'solutions', title: 'Solutions', links: parseLinks(data.solutionLinks) },
+            { id: 'resources', title: 'Resources', links: parseLinks(data.resourceLinks) },
+            { id: 'legal', title: 'Legal', links: parseLinks(data.legalLinks) }
           ]
         };
         setFormData(mappedData);
@@ -62,15 +76,9 @@ const FooterSettings = () => {
     try {
       setIsSaving(true);
 
-      const processLinks = (links) => {
-        return links
-          .map(link => link.trim())
-          .filter(link => link !== "");
-      };
-
       const getColumnLinks = (id) => {
         const column = formData.columns.find(col => col.id === id);
-        return column ? processLinks(column.links) : [];
+        return column ? serializeLinks(column.links) : [];
       };
 
       const payload = {
@@ -94,10 +102,10 @@ const FooterSettings = () => {
         tagline: freshData.footerTagline || "",
         description: freshData.footerDescription || "",
         columns: [
-          { id: 'company', title: 'Company', links: freshData.companyLinks || [] },
-          { id: 'solutions', title: 'Solutions', links: freshData.solutionLinks || [] },
-          { id: 'resources', title: 'Resources', links: freshData.resourceLinks || [] },
-          { id: 'legal', title: 'Legal', links: freshData.legalLinks || [] }
+          { id: 'company', title: 'Company', links: parseLinks(freshData.companyLinks) },
+          { id: 'solutions', title: 'Solutions', links: parseLinks(freshData.solutionLinks) },
+          { id: 'resources', title: 'Resources', links: parseLinks(freshData.resourceLinks) },
+          { id: 'legal', title: 'Legal', links: parseLinks(freshData.legalLinks) }
         ]
       };
       
@@ -113,13 +121,13 @@ const FooterSettings = () => {
     }
   };
 
-  const handleColumnChange = (columnId, linkIndex, newValue) => {
+  const handleColumnChange = (columnId, linkIndex, field, newValue) => {
     setFormData(prev => ({
       ...prev,
       columns: prev.columns.map(col => {
         if (col.id === columnId) {
           const newLinks = [...col.links];
-          newLinks[linkIndex] = newValue;
+          newLinks[linkIndex] = { ...newLinks[linkIndex], [field]: newValue };
           return { ...col, links: newLinks };
         }
         return col;
@@ -144,7 +152,7 @@ const FooterSettings = () => {
       ...prev,
       columns: prev.columns.map(col => {
         if (col.id === columnId) {
-          return { ...col, links: [...col.links, ""] };
+          return { ...col, links: [...col.links, { label: "", url: "" }] };
         }
         return col;
       })
@@ -204,9 +212,17 @@ const FooterSettings = () => {
                     <div key={index} className="flex items-center gap-2 group">
                       <input 
                         type="text"
-                        value={link}
-                        onChange={(e) => handleColumnChange(column.id, index, e.target.value)}
-                        className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#F97316] focus:border-[#F97316] outline-none transition-all text-[13px] text-gray-600"
+                        placeholder="Label"
+                        value={link.label}
+                        onChange={(e) => handleColumnChange(column.id, index, 'label', e.target.value)}
+                        className="w-1/2 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#F97316] focus:border-[#F97316] outline-none transition-all text-[13px] text-gray-600"
+                      />
+                      <input 
+                        type="text"
+                        placeholder="URL"
+                        value={link.url}
+                        onChange={(e) => handleColumnChange(column.id, index, 'url', e.target.value)}
+                        className="w-1/2 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:ring-1 focus:ring-[#F97316] focus:border-[#F97316] outline-none transition-all text-[13px] text-gray-600"
                       />
                       <button 
                         onClick={() => handleDeleteLink(column.id, index)}
