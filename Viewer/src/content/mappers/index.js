@@ -49,7 +49,7 @@ export const mapHeroData = (homepage) => {
     heroSubtitle: withFallback(safeHomepage.heroSubtitle, DEFAULT_HOMEPAGE.hero.subtitle),
     heroDescription: withFallback(safeHomepage.heroDescription, DEFAULT_HOMEPAGE.hero.description),
     trustBarItems: withArrayFallback(safeHomepage.trustBarItems, DEFAULT_HOMEPAGE.hero.trustBarItems),
-    backgroundImage: DEFAULT_HOMEPAGE.hero.backgroundImage,
+    backgroundImage: withFallback(safeHomepage.heroImage, DEFAULT_HOMEPAGE.hero.backgroundImage),
     backgroundVideo: null,
     primaryCTA: {
       text: withFallback(safeHomepage.ctaText, DEFAULT_HOMEPAGE.hero.primaryCTA.text),

@@ -113,11 +113,11 @@ const SolutionsPage = () => {
 
       {/* 1. Premium Hero Background Section */}
       <section className="relative min-h-[75vh] flex items-center pt-32 pb-24 overflow-hidden">
-        {/* Defence Command Center Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 w-full h-full">
+        {/* Hero Background */}
+        <div className="absolute inset-0 z-0">
           <img
-            src={solutionsHeroImage}
-            alt="Defence Operations Command Center"
+            src={content?.heroData?.backgroundImage || solutionsHeroImage}
+            alt="Command and Control Solutions"
             className="w-full h-full object-cover"
             onError={(e) => { e.target.style.display = 'none'; }}
           />

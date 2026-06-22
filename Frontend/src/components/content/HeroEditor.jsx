@@ -28,25 +28,21 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
   const handleSave = () => {
     const newErrors = {};
-    
-    const isValidUrl = (url) => {
-      const trimmed = url.trim();
-      return trimmed.startsWith('/') || /^https?:\/\/.+/.test(trimmed);
-    };
+    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
     if (!formData.heroTitle?.trim()) newErrors.heroTitle = 'Hero title is required';
     if (!formData.heroSubtitle?.trim()) newErrors.heroSubtitle = 'Hero subtitle is required';
     if (!formData.heroDescription?.trim()) newErrors.heroDescription = 'Hero description is required';
     if (!formData.ctaText?.trim()) newErrors.ctaText = 'CTA button text is required';
-    
+
     if (!formData.ctaLink?.trim()) {
       newErrors.ctaLink = 'CTA URL is required';
-    } else if (!isValidUrl(formData.ctaLink)) {
-      newErrors.ctaLink = 'Must be a valid internal route (e.g. /about) or external URL (e.g. https://example.com)';
+    } else if (!urlRegex.test(formData.ctaLink.trim())) {
+      newErrors.ctaLink = 'Must be a valid URL (e.g. https://example.com)';
     }
 
-    if (formData.secondaryCtaLink?.trim() && !isValidUrl(formData.secondaryCtaLink)) {
-      newErrors.secondaryCtaLink = 'Must be a valid internal route (e.g. /about) or external URL (e.g. https://example.com)';
+    if (formData.secondaryCtaLink?.trim() && !urlRegex.test(formData.secondaryCtaLink.trim())) {
+      newErrors.secondaryCtaLink = 'Must be a valid URL (e.g. https://example.com)';
     }
 
     setErrors(newErrors);
@@ -67,7 +63,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
   return (
     <div className="flex-1 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 md:p-8 flex flex-col min-w-0">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-gray-100 gap-4">
         <div>
@@ -79,7 +75,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
             <Eye className="w-4 h-4" />
             Preview
           </button>
-          <button 
+          <button
             onClick={handleSave}
             disabled={isSaving}
             className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-[#E1432E] rounded-xl shadow-sm hover:bg-[#C92A22] transition-colors disabled:opacity-70"
@@ -92,7 +88,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
       {/* Dark Navy Hero Banner Preview inside Editor */}
       <div className="w-full bg-[#111318] rounded-2xl flex flex-col items-center justify-center py-10 px-6 text-center mb-8 relative overflow-hidden shadow-md"
-           style={formData.heroImage ? { backgroundImage: `url(${formData.heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+        style={formData.heroImage ? { backgroundImage: `url(${formData.heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
         <div className="absolute inset-0 bg-black/50 z-0"></div>
         <div className="relative z-10 flex flex-col items-center w-full">
           {formData.heroTitle ? (
@@ -132,8 +128,8 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
       <div className="space-y-6">
         <div>
           <label className="block mb-2 text-[13px] font-semibold text-gray-900">Hero Title <span className="text-rose-500">*</span></label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             name="heroTitle"
             value={formData.heroTitle}
             onChange={handleChange}
@@ -144,7 +140,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
         <div>
           <label className="block mb-2 text-[13px] font-semibold text-gray-900">Hero Subtitle <span className="text-rose-500">*</span></label>
-          <input 
+          <input
             type="text"
             name="heroSubtitle"
             value={formData.heroSubtitle}
@@ -156,7 +152,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
         <div>
           <label className="block mb-2 text-[13px] font-semibold text-gray-900">Hero Description <span className="text-rose-500">*</span></label>
-          <textarea 
+          <textarea
             name="heroDescription"
             value={formData.heroDescription}
             onChange={handleChange}
@@ -195,8 +191,8 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block mb-2 text-[13px] font-semibold text-gray-700">CTA Button Text <span className="text-rose-500">*</span></label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="ctaText"
               value={formData.ctaText}
               onChange={handleChange}
@@ -206,8 +202,8 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
           </div>
           <div>
             <label className="block mb-2 text-[13px] font-semibold text-gray-700">CTA URL <span className="text-rose-500">*</span></label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="ctaLink"
               value={formData.ctaLink}
               onChange={handleChange}
@@ -220,8 +216,8 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block mb-2 text-[13px] font-semibold text-gray-700">Secondary CTA Text</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="secondaryCtaText"
               value={formData.secondaryCtaText}
               onChange={handleChange}
@@ -230,8 +226,8 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
           </div>
           <div>
             <label className="block mb-2 text-[13px] font-semibold text-gray-700">Secondary CTA URL</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="secondaryCtaLink"
               value={formData.secondaryCtaLink}
               onChange={handleChange}
@@ -243,7 +239,7 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
       </div>
 
-      <MediaPickerModal 
+      <MediaPickerModal
         isOpen={pickerState.isOpen}
         title="Select Background Media"
         onClose={() => setPickerState({ isOpen: false })}

@@ -50,7 +50,7 @@ const AboutPage = () => {
       
       <main>
         {/* Phase 1 Sections */}
-        <AboutHeroSection data={aboutData} />
+        <AboutHeroSection data={aboutData} heroData={content.heroData} />
         <CompanySnapshotSection data={aboutData} />
         
 

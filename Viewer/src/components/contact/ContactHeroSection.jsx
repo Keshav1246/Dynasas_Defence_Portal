@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Lock, Globe2 } from 'lucide-react';
 import { CONTACT_PAGE_DEFAULTS } from '../../data/contactPageDefaults';
 
-const ContactHeroSection = ({ data, inquiryRef }) => {
+const ContactHeroSection = ({ data, heroData, inquiryRef }) => {
   const defaults = data?.hero || {};
   const primaryCTA = defaults.primaryCTA || 'Contact Experts';
   const secondaryCTA = defaults.secondaryCTA || 'View Headquarters';
@@ -43,7 +43,7 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
 
           {/* Main Defense Image Placeholder */}
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url('${defaults.image}')`, filter: 'contrast(1.2) brightness(0.8)' }}>
+            style={{ backgroundImage: `url('${heroData?.backgroundImage || defaults.image}')`, filter: 'contrast(1.2) brightness(0.8)' }}>
           </div>
 
           {/* Dark Blue-Black Tactical Overlay */}

@@ -166,7 +166,7 @@ const ServicesPage = () => {
         {/* Defence Command Center Background Image & Overlays */}
         <div className="absolute inset-0 z-0 w-full h-full">
           <img
-            src={servicesHeroImage}
+            src={content?.heroData?.backgroundImage || servicesHeroImage}
             alt="Defence Operations Command Center"
             className="w-full h-full object-cover"
             onError={(e) => { e.target.style.display = 'none'; }}
