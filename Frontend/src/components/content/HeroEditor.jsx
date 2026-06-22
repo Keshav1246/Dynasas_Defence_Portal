@@ -28,7 +28,11 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
 
   const handleSave = () => {
     const newErrors = {};
-    const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    
+    const isValidUrl = (url) => {
+      const trimmed = url.trim();
+      return trimmed.startsWith('/') || /^https?:\/\/.+/.test(trimmed);
+    };
 
     if (!formData.heroTitle?.trim()) newErrors.heroTitle = 'Hero title is required';
     if (!formData.heroSubtitle?.trim()) newErrors.heroSubtitle = 'Hero subtitle is required';
@@ -37,12 +41,12 @@ const HeroEditor = ({ data, onSave, isSaving }) => {
     
     if (!formData.ctaLink?.trim()) {
       newErrors.ctaLink = 'CTA URL is required';
-    } else if (!urlRegex.test(formData.ctaLink.trim())) {
-      newErrors.ctaLink = 'Must be a valid URL (e.g. https://example.com)';
+    } else if (!isValidUrl(formData.ctaLink)) {
+      newErrors.ctaLink = 'Must be a valid internal route (e.g. /about) or external URL (e.g. https://example.com)';
     }
 
-    if (formData.secondaryCtaLink?.trim() && !urlRegex.test(formData.secondaryCtaLink.trim())) {
-      newErrors.secondaryCtaLink = 'Must be a valid URL (e.g. https://example.com)';
+    if (formData.secondaryCtaLink?.trim() && !isValidUrl(formData.secondaryCtaLink)) {
+      newErrors.secondaryCtaLink = 'Must be a valid internal route (e.g. /about) or external URL (e.g. https://example.com)';
     }
 
     setErrors(newErrors);

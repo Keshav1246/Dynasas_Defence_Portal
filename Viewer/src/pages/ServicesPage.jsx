@@ -299,7 +299,7 @@ const ServicesPage = () => {
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-16 items-center">
 
                     {/* Left Side: Numbering UI, Faded Background Title, and Larger Floating Image */}
-                    <div className="relative w-full aspect-square lg:aspect-[4/3] flex items-center justify-center pl-16 xl:pl-20">
+                    <div className="relative w-full flex items-center justify-center pl-16 xl:pl-20">
 
                       {/* Left-edge specific numbering UI - Start exactly at the top */}
                       <div className="absolute left-0 top-0 h-full flex flex-col items-center justify-start z-20 pointer-events-none opacity-90 pt-8 lg:pt-12" style={{ width: '40px' }}>
@@ -328,7 +328,7 @@ const ServicesPage = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 1, ease: "easeOut" }}
-                        className="relative z-[1] w-full h-full xl:w-[115%] xl:-ml-4 flex flex-col items-center justify-center overflow-visible"
+                        className="relative z-[1] w-full xl:w-[115%] xl:-ml-4 flex flex-col items-center justify-center overflow-visible"
                       >
                         {/* Top Watermark = 1 */}
                         {topWord && (
@@ -359,7 +359,7 @@ const ServicesPage = () => {
                         <img
                           src={imagePath}
                           alt={service.title}
-                          className="relative z-[2] w-full h-full object-contain filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]"
+                          className="relative z-[2] w-full h-auto object-contain object-center filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.8)]"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
 
@@ -503,8 +503,8 @@ const ServicesPage = () => {
 
                                 <div className="relative z-10">
                                   {activeSubservice.image && (
-                                     <div className="mb-8 w-full max-w-[200px] aspect-video relative flex items-center justify-start overflow-hidden rounded-lg opacity-80 group-hover:opacity-100 transition-opacity">
-                                       <img src={activeSubservice.image} alt={activeSubservice.title} className="w-full h-full object-contain filter drop-shadow-xl" />
+                                     <div className="mb-8 w-full max-w-[200px] relative flex items-center justify-start overflow-hidden rounded-lg opacity-80 group-hover:opacity-100 transition-opacity">
+                                       <img src={activeSubservice.image} alt={activeSubservice.title} className="w-full h-auto object-contain object-center filter drop-shadow-xl" />
                                      </div>
                                   )}
                                   

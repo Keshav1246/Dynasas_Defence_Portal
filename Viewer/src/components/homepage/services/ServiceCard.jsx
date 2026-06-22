@@ -97,11 +97,11 @@ const ServiceCard = ({ service, index, position, setActiveIndex }) => {
               className="overflow-hidden"
             >
               {/* Mobile Only Image */}
-              <div className="md:hidden w-full h-48 mb-6 border border-brand-border relative overflow-hidden mt-4">
+              <div className="md:hidden w-full h-auto mb-6 border border-brand-border relative overflow-hidden mt-4">
                 <img 
                   src={imageUrl} 
                   alt={service.imageAlt || service.title} 
-                  className="w-full h-full object-cover opacity-60"
+                  className="w-full h-auto object-contain object-center opacity-60"
                 />
                 <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(10,10,10,0.9)] z-10 pointer-events-none" />
               </div>

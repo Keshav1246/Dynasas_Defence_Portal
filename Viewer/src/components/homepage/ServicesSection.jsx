@@ -284,7 +284,7 @@ const ServicesSection = ({ data }) => {
 
           {/* Left Panel: Sticky Media */}
           <div className="w-full lg:w-5/12 hidden md:flex flex-col relative justify-center max-h-[60vh]">
-            <div className="w-full aspect-[4/5] border border-brand-border/30 shadow-2xl rounded-sm overflow-hidden relative">
+            <div className="w-full border border-brand-border/30 shadow-2xl rounded-sm overflow-hidden relative">
               <ServicesStickyMedia activeService={services[activeIndex]} />
             </div>
           </div>

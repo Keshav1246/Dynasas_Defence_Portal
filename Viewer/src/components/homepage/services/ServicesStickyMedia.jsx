@@ -8,7 +8,7 @@ const ServicesStickyMedia = ({ activeService }) => {
   const imageUrl = getServiceImage(activeService);
 
   return (
-    <div className="absolute inset-0 w-full h-full bg-brand-black">
+    <div className="relative w-full bg-brand-black">
       {/* Fallback tactical gradient in case images fail to load */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-dark to-brand-black opacity-50" />
       <AnimatePresence mode="wait">
@@ -18,12 +18,12 @@ const ServicesStickyMedia = ({ activeService }) => {
           animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="absolute inset-0 w-full h-full"
+          className="relative w-full"
         >
           <img
             src={imageUrl}
             alt={activeService.imageAlt || activeService.title}
-            className="w-full h-full object-cover opacity-60"
+            className="w-full h-auto object-contain object-center opacity-60"
             onError={(e) => {
               // Basic fallback if the image fails to load
               e.target.style.display = 'none';
