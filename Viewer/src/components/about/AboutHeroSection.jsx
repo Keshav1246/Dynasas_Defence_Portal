@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Calendar } from 'lucide-react';
 import { ABOUT_PAGE_DEFAULTS } from '../../data/aboutPageDefaults';
 
-const AboutHeroSection = ({ data, heroData }) => {
+const AboutHeroSection = ({ data }) => {
   const defaults = data?.hero || {};
   const overview = data?.overview || data?.companyOverview;
   const foundedYear = data?.details?.foundedYear;
@@ -18,7 +18,7 @@ const AboutHeroSection = ({ data, heroData }) => {
   
   const sectionLabel = defaults.sectionLabel;
   const sectionTitle = defaults.sectionTitle;
-  const bgImage = heroData?.backgroundImage || defaults.bgImage;
+  const bgImage = defaults.bgImage;
   const heroOverview = overview || defaults.overview;
   const primaryCTA = defaults.primaryCTA || { text: 'Our Mission', link: '#mission' };
   const secondaryCTA = defaults.secondaryCTA || { text: 'Contact Us', link: '/contact' };

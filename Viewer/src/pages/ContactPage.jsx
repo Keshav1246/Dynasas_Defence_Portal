@@ -52,7 +52,7 @@ const ContactPage = () => {
       <Header siteData={siteData} />
       
       <main className="pt-[100px] md:pt-[120px]">
-        <ContactHeroSection data={contactData} heroData={content.heroData} inquiryRef={inquirySectionRef} />
+        <ContactHeroSection data={contactData} inquiryRef={inquirySectionRef} />
         <ContactInfoSection data={contactData} />
         <ContactHeadquartersSection data={contactData} />
         <ContactInquirySection data={contactData} forwardRef={inquirySectionRef} />
