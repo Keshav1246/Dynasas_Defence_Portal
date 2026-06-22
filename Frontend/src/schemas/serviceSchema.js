@@ -11,4 +11,5 @@ export const serviceSchema = z.object({
   isActive: z.boolean().optional(),
   status: z.enum(["published", "draft", "archived"]),
   displayOrder: z.coerce.number().int().nonnegative("Display order cannot be negative").optional().default(0),
+  subservices: z.any().optional(),
 });
