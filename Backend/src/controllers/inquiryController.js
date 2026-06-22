@@ -27,6 +27,7 @@ class InquiryController {
       }
 
       const inquiry = await inquiryService.createInquiry(payload);
+
       res.status(201).json(apiResponse.success(inquiry, 'Your inquiry has been submitted successfully'));
     } catch (error) {
       next(error);
@@ -184,48 +185,70 @@ class InquiryController {
         throw new AppError('Inquiry not found', 404);
       }
 
+      const isFirstAssignment = !inquiry.assignedTeam && assignedTeam;
+
       const updatedInquiry = await inquiryService.assignInquiry(id, assignedTeam);
 
-      // Email Delivery Verification Logging 
-      const recipientEmail = "kushal.arora77@gmail.com";
-      const prisma = require('../config/prisma');
+      if (isFirstAssignment) {
+        const { databaseToDisplayMap } = require('../constants/inquiryMapping');
+        const prisma = require('../config/prisma');
 
-      // Set initial pending state
-      await prisma.inquiry.update({
-        where: { id: parseInt(id, 10) },
-        data: {
-          emailStatus: 'PENDING',
-          emailError: null,
-          emailSent: false
+        let recipientEmail = process.env.SMTP_FROM ? process.env.SMTP_FROM.match(/<([^>]+)>/)?.[1] || process.env.SMTP_FROM : 'admin@dynasoft.com';
+        if (assignedTeam === 'Sales') {
+          recipientEmail = process.env.SALES_TEAM_EMAIL;
+        } else if (assignedTeam === 'Partnership') {
+          recipientEmail = process.env.PARTNERSHIP_TEAM_EMAIL;
+        } else if (assignedTeam === 'Support') {
+          recipientEmail = process.env.SUPPORT_TEAM_EMAIL;
         }
-      });
 
-      try {
-        const emailService = require('../utils/emailService');
-        await emailService.sendEmail({
-          to: recipientEmail,
-          subject: `New Inquiry Assigned: ${updatedInquiry.subject}`,
-          html: `<p>A new inquiry has been assigned to your team.</p><p><strong>From:</strong> ${updatedInquiry.fullName} (${updatedInquiry.email})</p><p><strong>Subject:</strong> ${updatedInquiry.subject}</p>`
-        });
+        const displayType = databaseToDisplayMap[updatedInquiry.inquiryType] || updatedInquiry.inquiryType;
 
+        // Set initial pending state
         await prisma.inquiry.update({
           where: { id: parseInt(id, 10) },
           data: {
-            emailStatus: 'SENT',
-            emailSent: true,
-            sentAt: new Date()
+            emailStatus: 'PENDING',
+            emailError: null,
+            emailSent: false
           }
         });
-      } catch (err) {
-        console.error("Failed to send email notification", err);
-        await prisma.inquiry.update({
-          where: { id: parseInt(id, 10) },
-          data: {
-            emailStatus: 'FAILED',
-            emailSent: false,
-            emailError: err.message || 'Unknown error'
-          }
-        });
+
+        try {
+          const emailService = require('../utils/emailService');
+          await emailService.sendEmail({
+            to: recipientEmail,
+            subject: `New Inquiry Assigned: ${updatedInquiry.subject}`,
+            html: `
+              <h3>New Contact Inquiry</h3>
+              <p><strong>Name:</strong> ${updatedInquiry.fullName}</p>
+              <p><strong>Email:</strong> ${updatedInquiry.email}</p>
+              <p><strong>Organization:</strong> ${updatedInquiry.organization || 'N/A'}</p>
+              <p><strong>Type:</strong> ${displayType}</p>
+              <p><strong>Message:</strong></p>
+              <p>${updatedInquiry.message}</p>
+            `
+          });
+
+          await prisma.inquiry.update({
+            where: { id: parseInt(id, 10) },
+            data: {
+              emailStatus: 'SENT',
+              emailSent: true,
+              sentAt: new Date()
+            }
+          });
+        } catch (err) {
+          console.error("Failed to send email notification", err);
+          await prisma.inquiry.update({
+            where: { id: parseInt(id, 10) },
+            data: {
+              emailStatus: 'FAILED',
+              emailSent: false,
+              emailError: err.message || 'Unknown error'
+            }
+          });
+        }
       }
 
       // Re-fetch inquiry for the frontend

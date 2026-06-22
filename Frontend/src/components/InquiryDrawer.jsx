@@ -10,7 +10,7 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
   const [note, setNote] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  const TEAMS = ['Sales', 'Technical', 'Support'];
+  const TEAMS = ['Sales', 'Partnership', 'Support'];
 
   useEffect(() => {
     if (inquiry) {
@@ -78,15 +78,15 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
 
   return (
     <>
-      <div 
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity" 
+      <div
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
         onClick={onClose}
       />
       <div className="fixed top-0 right-0 h-screen w-[420px] max-lg:w-full bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-[17px] font-bold text-gray-900 tracking-tight">Inquiry Detail</h2>
-          <button 
+          <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           >
@@ -96,7 +96,7 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
-          
+
           {/* User Profile */}
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-full bg-[#f95724] text-white flex items-center justify-center font-bold text-lg shrink-0">
@@ -146,16 +146,15 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
                   )}
                 </div>
                 <div className="text-right">
-                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full tracking-wide ${
-                    inquiry.emailStatus === 'SENT' ? 'bg-[#eefcf3] text-[#10b981]' : 
-                    inquiry.emailStatus === 'FAILED' ? 'bg-[#ffe4e6] text-red-600' : 
-                    'bg-amber-50 text-amber-600'
-                  }`}>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full tracking-wide ${inquiry.emailStatus === 'SENT' ? 'bg-[#eefcf3] text-[#10b981]' :
+                      inquiry.emailStatus === 'FAILED' ? 'bg-[#ffe4e6] text-red-600' :
+                        'bg-amber-50 text-amber-600'
+                    }`}>
                     {inquiry.emailStatus}
                   </span>
                   {(inquiry.sentAt || inquiry.updatedAt) && (
                     <div className="text-[10px] text-gray-400 mt-1">
-                      {new Date(inquiry.sentAt || inquiry.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      {new Date(inquiry.sentAt || inquiry.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   )}
                 </div>
@@ -169,7 +168,7 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
           <div className="space-y-6">
             <div>
               <label className="text-[10px] font-bold text-gray-400 tracking-wider mb-2 block uppercase">Update Status</label>
-              <select 
+              <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-gray-300 outline-none transition-colors"
@@ -182,7 +181,7 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
 
             <div>
               <label className="text-[10px] font-bold text-gray-400 tracking-wider mb-2 block uppercase">Assign To Team</label>
-              <select 
+              <select
                 value={assignedTeam}
                 onChange={(e) => setAssignedTeam(e.target.value)}
                 className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:border-gray-300 outline-none transition-colors"
@@ -196,7 +195,7 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
 
             <div>
               <label className="text-[10px] font-bold text-gray-400 tracking-wider mb-2 block uppercase">Add Note</label>
-              <textarea 
+              <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Enter internal note..."
@@ -208,16 +207,16 @@ const InquiryDrawer = ({ isOpen, onClose, inquiry, onUpdate }) => {
 
         {/* Footer Actions */}
         <div className="p-6 border-t border-gray-100 space-y-3 bg-white">
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             className="w-full h-11 text-[14px] font-semibold bg-[#f95724] hover:bg-[#e64a1d]"
             onClick={handleSave}
             disabled={isSaving}
           >
             {isSaving ? 'Saving...' : 'Save & Update'}
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full h-11 text-[14px] font-semibold text-[#10b981] bg-[#eefcf3] border border-transparent hover:bg-[#dcfce7] hover:border-transparent transition-colors"
             onClick={handleMarkResolved}
             disabled={isSaving || status === 'CLOSED'}
