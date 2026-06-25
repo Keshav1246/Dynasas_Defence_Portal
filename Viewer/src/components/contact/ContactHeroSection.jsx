@@ -30,37 +30,15 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-[#050505]">
-
-      {/* Extremely Faint Background Grid */}
-      <div className="absolute inset-0 opacity-100 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
-      </div>
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-brand-black">
 
       {/* Cinematic Right-Side Visual Composition */}
-      <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full z-0">
+      <div className="absolute inset-0 z-0 w-full h-full">
         <div className="w-full h-full relative">
-
-          {/* Main Defense Image Placeholder */}
+          {/* Main Defense Image */}
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url('${defaults.image}')`, filter: 'contrast(1.2) brightness(0.8)' }}>
+            style={{ backgroundImage: `url('${defaults.image}')` }}>
           </div>
-
-          {/* Dark Blue-Black Tactical Overlay */}
-          <div className="absolute inset-0 bg-[#050505]/70 mix-blend-multiply"></div>
-
-          {/* Left-to-Right Fade */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/90 to-transparent"></div>
-
-          {/* Orange Network Glow Focus Point */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-primary/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none"></div>
-
-          {/* Tactical Connection Lines Overlay */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none"
-            style={{ backgroundImage: 'linear-gradient(rgba(255, 106, 0, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 106, 0, 0.15) 1px, transparent 1px)', backgroundSize: '150px 150px' }}>
-          </div>
-
-
         </div>
       </div>
 
@@ -81,14 +59,14 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
           </div>
 
           {/* Large Heading */}
-          <h1 className="text-5xl md:text-6xl font-heading font-bold text-brand-white leading-[1.1] mb-8">
+          <h1 className="text-5xl md:text-6xl font-heading font-bold text-[#1a1a1a] leading-[1.1] mb-8">
             {defaults.heading} <br />
             <span className="text-brand-primary">{defaults.headingHighlight}</span> <br />
             {defaults.headingEnd}
           </h1>
 
           {/* Body Text */}
-          <p className="text-xl text-brand-white/70 font-body leading-relaxed mb-12 max-w-lg">
+          <p className="text-xl text-[#1a1a1a] font-body leading-relaxed mb-12 max-w-lg">
             {defaults.description}
           </p>
 
@@ -96,7 +74,7 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
           <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleScrollToInquiry}
-              className="inline-flex items-center justify-center gap-3 bg-brand-primary text-[#050505] px-8 py-4 font-heading font-bold uppercase tracking-widest text-sm hover:bg-brand-primary/90 hover:shadow-[0_0_15px_rgba(255,106,0,0.4)] transition-all duration-300 cursor-pointer"
+              className="inline-flex items-center justify-center gap-3 bg-brand-primary text-brand-black px-8 py-4 font-heading font-bold uppercase tracking-widest text-sm hover:bg-brand-primary/90 hover:shadow-[0_0_15px_rgba(255,106,0,0.4)] transition-all duration-300 cursor-pointer"
             >
               {primaryCTA}
               <ArrowRight size={18} />
@@ -105,7 +83,7 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
             {/* Functional Google Maps Link */}
             <button
               onClick={handleMapsClick}
-              className="inline-flex items-center justify-center gap-3 border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.02)] text-brand-white px-8 py-4 font-heading font-bold uppercase tracking-widest text-sm hover:bg-[rgba(255,255,255,0.05)] hover:border-[rgba(255,255,255,0.3)] transition-all duration-300"
+              className="inline-flex items-center justify-center gap-3 border border-[rgba(0,0,0,0.15)] bg-[rgba(255,255,255,0.4)] text-[#1a1a1a] px-8 py-4 font-heading font-bold uppercase tracking-widest text-sm hover:bg-[rgba(255,255,255,0.6)] hover:border-[rgba(0,0,0,0.3)] transition-all duration-300"
             >
               <MapPin size={18} className="text-brand-primary" />
               {secondaryCTA}
