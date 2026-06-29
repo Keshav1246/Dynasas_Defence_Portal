@@ -8,6 +8,7 @@ import Header from '../components/layout/Header';
 import FooterSection from '../components/layout/FooterSection';
 import { ArrowRight, Target, Shield, Radar, Camera, Cpu } from 'lucide-react';
 import { DEFAULT_SOLUTIONS } from '../defaults/solutions';
+import ScrollIndicator from '../components/layout/ScrollIndicator';
 
 // Import local assets
 import solutionsHeroImage from '../../src/assets/solutions/solutions-hero.png';
@@ -210,6 +211,7 @@ const SolutionsPage = () => {
 
           </div>
         </div>
+        <ScrollIndicator />
       </section>
 
       {/* 3. Dynamic Solution Sections */}
