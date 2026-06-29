@@ -117,8 +117,8 @@ const SolutionsPage = () => {
       <section 
         className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          paddingTop: 'clamp(80px, 8vw, 120px)',
-          paddingBottom: 'clamp(64px, 8vw, 128px)'
+          paddingTop: 'min(10vw, 150px)',
+          paddingBottom: 'min(8vw, 120px)'
         }}
       >
 
@@ -135,8 +135,8 @@ const SolutionsPage = () => {
             className="relative z-20 w-full"
             style={{
               flex: '0 0 auto',
-              maxWidth: '620px',
-              marginLeft: 'clamp(16px, 3vw, 64px)'
+              width: 'min(40vw, 620px)',
+              marginLeft: 'min(3vw, 48px)'
             }}
           >
             {/* Badge Row */}
@@ -161,7 +161,7 @@ const SolutionsPage = () => {
             >
               <h1 
                 className="font-heading font-bold mb-6 leading-[1.1] text-brand-white tracking-tight drop-shadow-md"
-                style={{ fontSize: 'clamp(52px, 4vw, 78px)' }}
+                style={{ fontSize: 'min(4.5vw, 70px)' }}
               >
                 {renderHeroTitle(DEFAULT_SOLUTIONS.hero.title)}
               </h1>
@@ -170,7 +170,7 @@ const SolutionsPage = () => {
 
               <p 
                 className="text-brand-white/90 leading-relaxed font-body drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-                style={{ fontSize: 'clamp(17px, 1.15vw, 21px)' }}
+                style={{ fontSize: 'min(1.2vw, 19px)' }}
               >
                 {DEFAULT_SOLUTIONS.hero.description}
               </p>
@@ -181,8 +181,8 @@ const SolutionsPage = () => {
           <div 
             className="relative z-0 w-full flex justify-center lg:justify-end"
             style={{
-              flex: '0 1 860px',
-              maxWidth: '860px'
+              flex: '0 1 auto',
+              width: 'min(55vw, 860px)'
             }}
           >
             <TacticalMap />
