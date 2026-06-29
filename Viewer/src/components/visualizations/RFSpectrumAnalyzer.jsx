@@ -42,13 +42,20 @@ const RFSpectrumAnalyzer = () => {
     let width, sHeight, wHeight;
 
     const padLeft = 45; // Dedicated left padding for labels
-    const padBottom = 20;
+    let padBottom = 20;
+    let isMobile = false;
 
     const resize = () => {
       const rect = container.getBoundingClientRect();
       width = rect.width;
-      sHeight = 250;
-      wHeight = 350;
+      isMobile = width < 768;
+      padBottom = isMobile ? 0 : 20;
+      
+      sHeight = isMobile ? Math.max(150, width * 0.35) : 250;
+      wHeight = isMobile ? Math.max(200, width * 0.5) : 350;
+
+      sCanvas.style.height = `${sHeight}px`;
+      wCanvas.style.height = `${wHeight}px`;
 
       const dpr = window.devicePixelRatio || 1;
 
@@ -307,13 +314,15 @@ const RFSpectrumAnalyzer = () => {
         }
       }
 
-      // Frequency Labels (Bottom)
-      sCtx.textAlign = 'center';
-      sCtx.textBaseline = 'top';
-      for (let i = 0; i <= numVertLines; i++) {
-        const x = padLeft + (graphWidth / numVertLines) * i;
-        const mhz = 271 + (i * (7 / numVertLines));
-        sCtx.fillText(`${mhz.toFixed(3)}M`, x, graphHeight + 6);
+      // Frequency Labels (Bottom) - Hidden on Mobile
+      if (!isMobile) {
+        sCtx.textAlign = 'center';
+        sCtx.textBaseline = 'top';
+        for (let i = 0; i <= numVertLines; i++) {
+          const x = padLeft + (graphWidth / numVertLines) * i;
+          const mhz = 271 + (i * (7 / numVertLines));
+          sCtx.fillText(`${mhz.toFixed(3)}M`, x, graphHeight + 6);
+        }
       }
 
       // 3. Draw Waterfall (Bottom)
@@ -385,19 +394,17 @@ const RFSpectrumAnalyzer = () => {
         <canvas
           ref={spectrumCanvasRef}
           className="w-full block"
-          style={{ height: '250px' }}
         />
 
         {/* Physical Divider between Spectrum and Waterfall */}
         <div
-          className="w-full h-[1.5px] my-4"
+          className="w-full h-[1.5px] my-0 md:my-4"
           style={{ backgroundColor: theme === 'light' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)' }}
         />
 
         <canvas
           ref={waterfallCanvasRef}
           className="w-full block"
-          style={{ height: '350px' }}
         />
       </div>
     </section>

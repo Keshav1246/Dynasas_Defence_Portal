@@ -56,10 +56,15 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
   };
 
   return (
-    <section className="relative h-screen min-h-[600px] flex items-center overflow-hidden bg-brand-black">
+    <section className="relative min-h-screen lg:h-screen lg:min-h-[600px] flex flex-col lg:flex-row lg:items-center overflow-hidden bg-brand-black pt-20 lg:pt-0">
 
-      {/* Cinematic Right-Side Visual Composition */}
-      <div className="absolute inset-0 z-0 w-full h-full">
+      {/* Mobile Inline Image (Preserves Aspect Ratio, No Cropping) */}
+      <div className="w-full lg:hidden relative z-0 flex-shrink-0 px-4">
+        <img src={currentHeroImage} alt="Contact Dynasas" className="w-full h-auto object-contain rounded-lg shadow-lg" />
+      </div>
+
+      {/* Cinematic Right-Side Visual Composition (Desktop Only) */}
+      <div className="hidden lg:block absolute inset-0 z-0 w-full h-full">
         <div className="w-full h-full relative">
           {/* Main Defense Image */}
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -69,7 +74,7 @@ const ContactHeroSection = ({ data, inquiryRef }) => {
       </div>
 
       {/* LEFT CONTENT AREA (40%) */}
-      <div className="container mx-auto px-6 relative z-10 py-32">
+      <div className="container mx-auto px-6 relative z-10 py-12 lg:py-32 flex-1 flex flex-col justify-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

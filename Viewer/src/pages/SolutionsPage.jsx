@@ -114,29 +114,34 @@ const SolutionsPage = () => {
       <Header siteData={siteData} />
 
       {/* 1. Premium Hero Background Section */}
-      <section className="relative min-h-[75vh] flex items-center pt-40 pb-24 lg:pb-32">
-
+      <section className="relative min-h-[75vh] flex flex-col justify-center pt-32 pb-16 lg:pt-20 lg:pb-20 xl:pt-50 xl:pb-32">
 
         <div className="container mx-auto px-6 lg:pl-24 lg:pr-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
+          {/* Badge Row (Moved out of grid for perfect heading alignment) */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex items-center gap-3 mb-6 lg:mb-8"
+          >
+            <div className="w-4 h-6 border border-brand-primary rounded-full flex items-center justify-center">
+              <div className="w-1 h-2 bg-brand-primary rounded-full" />
+            </div>
+            <h4 className="text-brand-primary font-heading tracking-[0.2em] text-sm font-bold uppercase">
+              {DEFAULT_SOLUTIONS.hero.label}
+            </h4>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
             {/* Left Hero Content */}
             <div className="lg:col-span-5 relative z-20">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-4 h-6 border border-brand-primary rounded-full flex items-center justify-center">
-                    <div className="w-1 h-2 bg-brand-primary rounded-full" />
-                  </div>
-                  <h4 className="text-brand-primary font-heading tracking-[0.2em] text-sm font-bold uppercase">
-                    {DEFAULT_SOLUTIONS.hero.label}
-                  </h4>
-                </div>
-
-                <h1 className="text-5xl lg:text-7xl font-heading font-bold mb-8 leading-[1.1] text-brand-white tracking-tight drop-shadow-md">
+                <h1 className="text-5xl lg:text-7xl font-heading font-bold mb-6 leading-[1.1] text-brand-white tracking-tight drop-shadow-md">
                   {renderHeroTitle(DEFAULT_SOLUTIONS.hero.title)}
                 </h1>
 

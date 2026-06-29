@@ -17,7 +17,7 @@ const dronePosition = { top: '12%', left: '49%' }; // Exactly 15% above the comm
 export default function TacticalMap() {
 
   return (
-    <div className="relative z-0 w-full flex items-start justify-center lg:justify-end pointer-events-none mt-12 lg:mt-[48px]">
+    <div className="relative z-0 w-full flex items-start justify-center lg:justify-end pointer-events-none">
 
       {/* MapContainer (position: relative) 
           Using w-full and h-auto on the image perfectly mimics object-fit: contain 
