@@ -114,53 +114,80 @@ const SolutionsPage = () => {
       <Header siteData={siteData} />
 
       {/* 1. Premium Hero Background Section */}
-      <section className="relative min-h-[75vh] flex flex-col justify-center pt-32 pb-16 lg:pt-20 lg:pb-20 xl:pt-50 xl:pb-32">
+      <section 
+        className="relative flex flex-col justify-center overflow-hidden"
+        style={{
+          paddingTop: 'clamp(80px, 8vw, 120px)',
+          paddingBottom: 'clamp(64px, 8vw, 128px)'
+        }}
+      >
 
-        <div className="container mx-auto px-6 lg:pl-24 lg:pr-8 relative z-10">
+        <div 
+          className="relative z-10 mx-auto w-full px-6 flex flex-col lg:flex-row items-center justify-center"
+          style={{
+            maxWidth: '1560px',
+            gap: 'clamp(48px, 5vw, 120px)'
+          }}
+        >
 
-          {/* Badge Row (Moved out of grid for perfect heading alignment) */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex items-center gap-3 mb-6 lg:mb-8"
+          {/* Left Hero Content */}
+          <div 
+            className="relative z-20 w-full"
+            style={{
+              flex: '0 0 auto',
+              maxWidth: '620px',
+              marginLeft: 'clamp(16px, 3vw, 64px)'
+            }}
           >
-            <div className="w-4 h-6 border border-brand-primary rounded-full flex items-center justify-center">
-              <div className="w-1 h-2 bg-brand-primary rounded-full" />
-            </div>
-            <h4 className="text-brand-primary font-heading tracking-[0.2em] text-sm font-bold uppercase">
-              {DEFAULT_SOLUTIONS.hero.label}
-            </h4>
-          </motion.div>
+            {/* Badge Row */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex items-center gap-3 mb-6 lg:mb-8"
+            >
+              <div className="w-4 h-6 border border-brand-primary rounded-full flex items-center justify-center">
+                <div className="w-1 h-2 bg-brand-primary rounded-full" />
+              </div>
+              <h4 className="text-brand-primary font-heading tracking-[0.2em] text-sm font-bold uppercase">
+                {DEFAULT_SOLUTIONS.hero.label}
+              </h4>
+            </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
-            {/* Left Hero Content */}
-            <div className="lg:col-span-5 relative z-20">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            >
+              <h1 
+                className="font-heading font-bold mb-6 leading-[1.1] text-brand-white tracking-tight drop-shadow-md"
+                style={{ fontSize: 'clamp(52px, 4vw, 78px)' }}
               >
-                <h1 className="text-5xl lg:text-7xl font-heading font-bold mb-6 leading-[1.1] text-brand-white tracking-tight drop-shadow-md">
-                  {renderHeroTitle(DEFAULT_SOLUTIONS.hero.title)}
-                </h1>
+                {renderHeroTitle(DEFAULT_SOLUTIONS.hero.title)}
+              </h1>
 
-                <div className="w-16 h-1 bg-brand-primary mb-8" />
+              <div className="w-16 h-1 bg-brand-primary mb-8" />
 
-                <p className="text-brand-white/90 text-lg lg:text-xl leading-relaxed max-w-2xl font-body drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                  {DEFAULT_SOLUTIONS.hero.description}
-                </p>
-              </motion.div>
-            </div>
-
-            {/* Solutions Navigator Card has been removed to open up the layout */}
-
-            {/* Right Hero Content (Image) */}
-            <div className="lg:col-span-7 relative z-0 flex justify-end">
-              <TacticalMap />
-            </div>
-
+              <p 
+                className="text-brand-white/90 leading-relaxed font-body drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                style={{ fontSize: 'clamp(17px, 1.15vw, 21px)' }}
+              >
+                {DEFAULT_SOLUTIONS.hero.description}
+              </p>
+            </motion.div>
           </div>
+
+          {/* Right Hero Content (Tactical Map) */}
+          <div 
+            className="relative z-0 w-full flex justify-center lg:justify-end"
+            style={{
+              flex: '0 1 860px',
+              maxWidth: '860px'
+            }}
+          >
+            <TacticalMap />
+          </div>
+
         </div>
         <ScrollIndicator className="bottom-4 lg:bottom-12" />
       </section>

@@ -12,7 +12,7 @@ const pinCoordinates = [
   { id: 7, top: '67%', left: '69%', delay: 0.6 },  // Bottom Right
 ];
 
-const dronePosition = { top: '12%', left: '49%' }; // Exactly 15% above the command vehicle
+const dronePosition = { top: '7%', left: '47%' }; // Directly above the command vehicle
 
 export default function TacticalMap() {
 
@@ -32,8 +32,23 @@ export default function TacticalMap() {
           className="block w-full h-auto"
         />
 
-        {/* drone & spotlight (absolute) */}
-        {/* Positioned independently of the map pins */}
+        {/* Spotlight originating from center of drone and pointing to command vehicle */}
+        <div
+          className="absolute z-10"
+          style={{
+            top: dronePosition.top,
+            left: dronePosition.left,
+            width: '8%',
+            height: '15%',
+            transform: 'translate(-50%, 10%)',
+            background: 'linear-gradient(to bottom, rgba(0, 100, 255, 0.4) 0%, rgba(0, 100, 255, 0) 100%)',
+            clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
+            filter: 'blur(5px)',
+          }}
+        />
+
+        {/* drone (absolute) */}
+        {/* Positioned directly above the command vehicle */}
         <div
           className="absolute z-20 flex flex-col items-center"
           style={{
@@ -42,19 +57,6 @@ export default function TacticalMap() {
             transform: 'translate(-50%, -50%)'
           }}
         >
-          {/* Spotlight originating from center of drone and pointing to command vehicle */}
-          <div
-            className="absolute top-[50%] left-1/2 -translate-x-1/2 w-[70px] md:w-[90px]"
-            style={{
-              height: '14vw',
-              maxHeight: '130px',
-              background: 'linear-gradient(to bottom, rgba(0, 100, 255, 0.4) 0%, rgba(0, 100, 255, 0) 100%)',
-              clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
-              filter: 'blur(5px)',
-              transformOrigin: 'top center',
-            }}
-          />
-
           {/* Drone Image (Floats 5-6px vertically) */}
           <motion.img
             src="/assets/solutions/Drone.png"
