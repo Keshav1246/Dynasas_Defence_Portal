@@ -8,6 +8,7 @@ import Header from '../components/layout/Header';
 import FooterSection from '../components/layout/FooterSection';
 import { ArrowRight, Target, Shield, Radar, Camera, Cpu } from 'lucide-react';
 import { DEFAULT_SOLUTIONS } from '../defaults/solutions';
+import TacticalMap from '../components/solutions/TacticalMap';
 
 // Import local assets
 import solutionsHeroImage from '../../src/assets/solutions/solutions-hero.png';
@@ -113,21 +114,13 @@ const SolutionsPage = () => {
 
       {/* 1. Premium Hero Background Section */}
       <section className="relative min-h-[75vh] flex items-center pt-48 pb-24 overflow-hidden">
-        {/* Defence Command Center Background Image & Overlays */}
-        <div className="absolute inset-0 z-0 w-full h-full">
-          <img
-            key={location.pathname}
-            src={solutionsHeroImage}
-            alt="Defence Operations Command Center"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <TacticalMap />
 
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
             {/* Left Hero Content */}
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-6 lg:col-start-2 xl:col-span-5 xl:col-start-2 relative z-20">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -142,7 +135,7 @@ const SolutionsPage = () => {
                   </h4>
                 </div>
 
-                <h1 className="text-5xl lg:text-7xl font-heading font-bold mb-8 leading-[1.1] text-[#1a1a1a] tracking-tight">
+                <h1 className="text-5xl lg:text-7xl font-heading font-bold mb-8 leading-[1.1] text-brand-white tracking-tight drop-shadow-md">
                   {renderHeroTitle(DEFAULT_SOLUTIONS.hero.title)}
                 </h1>
 
@@ -154,59 +147,7 @@ const SolutionsPage = () => {
               </motion.div>
             </div>
 
-            {/* 2. Solutions Navigator Card (Floating Right) */}
-            <div className="lg:col-span-4 lg:col-start-9 hidden lg:block">
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                className="bg-brand-black/40 backdrop-blur-2xl border border-brand-white/10 rounded-2xl p-8 relative overflow-hidden shadow-2xl max-w-[360px] ml-auto"
-              >
-                <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/10 blur-[60px] rounded-full pointer-events-none" />
-
-                <ul className="space-y-6">
-                  {solutions.length > 0 ? (
-                    solutions.map((solution, index) => {
-                      const isActive = activeSolutionId === solution.id;
-
-                      return (
-                        <li key={solution.id || index}>
-                          <button
-                            onClick={() => scrollToSolution(solution.id)}
-                            className="group flex items-center justify-between w-full focus:outline-none transition-all duration-300 relative p-3 -mx-3 rounded-lg hover:bg-[rgba(255,255,255,0.03)]"
-                          >
-                            {/* Left Orange Accent Line on Hover */}
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-0 bg-brand-primary group-hover:h-full transition-all duration-300 ease-out rounded-full" />
-
-                            <div className="flex items-center gap-6 pl-2">
-                              <span className={`text-sm font-heading tracking-widest transition-colors duration-300 ${isActive ? 'text-brand-primary font-bold' : 'text-brand-white/30 group-hover:text-brand-primary/70'}`}>
-                                {(index + 1).toString().padStart(2, '0')}
-                              </span>
-                              <span className={`text-[15px] font-heading text-left transition-colors duration-300 ${isActive ? 'text-brand-white font-bold drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'text-brand-white/60 group-hover:text-brand-white drop-shadow-[0_0_8px_rgba(255,255,255,0)] group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]'}`}>
-                                {solution.title}
-                              </span>
-                            </div>
-                            {/* Animated Active Dot indicator */}
-                            <div className="relative flex items-center justify-center w-5 h-5 ml-2">
-                              <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${isActive ? 'bg-brand-primary shadow-[0_0_8px_rgba(255,106,0,0.8)]' : 'bg-brand-white/10 group-hover:bg-brand-primary/50 group-hover:shadow-[0_0_5px_rgba(255,106,0,0.5)]'}`} />
-                              {(isActive || true) && (
-                                <motion.div
-                                  animate={isActive ? { rotate: 360 } : { rotate: 0 }}
-                                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                  className={`absolute inset-0 rounded-full border border-t-transparent transition-colors duration-300 ${isActive ? 'border-brand-primary/40' : 'border-transparent group-hover:border-brand-primary/20'}`}
-                                />
-                              )}
-                            </div>
-                          </button>
-                        </li>
-                      );
-                    })
-                  ) : (
-                    <li><span className="text-brand-white/40 font-heading text-sm">No solutions available</span></li>
-                  )}
-                </ul>
-              </motion.div>
-            </div>
+            {/* Solutions Navigator Card has been removed to open up the layout */}
 
           </div>
         </div>

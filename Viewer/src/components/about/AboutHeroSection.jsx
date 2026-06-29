@@ -20,40 +20,24 @@ const AboutHeroSection = ({ data }) => {
   const secondaryCTA = defaults.secondaryCTA || { text: 'Contact Us', link: '/contact' };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-brand-black">
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-brand-black pt-24 pb-24 lg:pt-28 lg:pb-32 mt-8">
       
-      {/* Background Subtle Grid - Extremely faint as requested */}
-      <div className="absolute inset-0 opacity-100 pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '32px 32px' }}>
+      {/* Background Subtle Dot Grid to match screenshot */}
+      <div className="absolute inset-0 opacity-40 pointer-events-none" 
+           style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
       </div>
 
-      {/* Full-Width Image Composition */}
-      <div className="absolute top-0 right-0 w-full h-full z-0">
-        <div className="w-full h-full relative">
-          {/* Main Image */}
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${bgImage})` }}></div>
+      {/* Main Content Area */}
+      <div className="container mx-auto px-6 relative z-10 max-w-[1300px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
-          {/* Subtle White Tint Overlay */}
-          <div className="absolute inset-0 bg-white/20"></div>
-
-          {/* Orange Network Glow */}
-          <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-brand-primary/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none"></div>
-          
-          {/* Subtle Tactical HUD Elements / Connection Lines overlay */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none" 
-               style={{ backgroundImage: 'linear-gradient(rgba(255, 106, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 106, 0, 0.1) 1px, transparent 1px)', backgroundSize: '100px 100px' }}>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area (Overlaying left side) */}
-      <div className="container mx-auto px-6 relative z-10 py-32 mt-16">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-2xl"
-        >
+          {/* LEFT CONTENT (50%) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full flex flex-col justify-center"
+          >
           <div className="flex items-center gap-4 mb-6">
             <div className="h-[1px] w-8 bg-brand-primary"></div>
             <span className="text-sm text-brand-primary tracking-widest font-heading uppercase font-bold">
@@ -61,10 +45,10 @@ const AboutHeroSection = ({ data }) => {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-[#1a1a1a] leading-[1.1] mb-8" dangerouslySetInnerHTML={{ __html: (sectionTitle || '').replace('Defense Technology', '<br class="hidden md:block" /><span class="text-brand-primary">Defense Technology</span>') }}>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-brand-white leading-[1.1] mb-6 tracking-tight" dangerouslySetInnerHTML={{ __html: (sectionTitle || '').replace('Defense Technology', '<br class="hidden md:block" /><span class="text-brand-primary">Defense Technology</span>') }}>
           </h1>
 
-          <p className="text-xl text-[#1a1a1a] font-body leading-relaxed mb-12 max-w-xl">
+          <p className="text-base md:text-lg text-brand-white/70 font-body leading-relaxed mb-10 max-w-xl">
             {heroOverview}
           </p>
 
@@ -85,24 +69,40 @@ const AboutHeroSection = ({ data }) => {
                 <Calendar size={18} />
               </div>
               <div>
-                <h4 className="text-[#1a1a1a]/60 text-[10px] font-heading tracking-widest uppercase mb-0.5">Founded</h4>
-                <p className="text-[#1a1a1a] font-mono font-bold text-lg">{foundedYear}</p>
+                <h4 className="text-brand-white/50 text-[10px] font-heading tracking-widest uppercase mb-0.5">Founded</h4>
+                <p className="text-brand-white font-mono font-bold text-lg">{foundedYear}</p>
               </div>
             </div>
             
-            <div className="hidden sm:block h-8 w-px bg-[rgba(255,255,255,0.06)]"></div>
+            <div className="hidden sm:block h-8 w-px bg-brand-white/10"></div>
 
             <div className="flex items-center gap-4 group">
               <div className="flex items-center justify-center w-10 h-10 rounded-full border border-brand-primary/30 bg-brand-primary/5 text-brand-primary group-hover:bg-brand-primary/20 transition-colors">
                 <MapPin size={18} />
               </div>
               <div>
-                <h4 className="text-[#1a1a1a]/60 text-[10px] font-heading tracking-widest uppercase mb-0.5">Headquarters</h4>
-                <p className="text-[#1a1a1a] font-mono font-bold text-lg">{[data?.details?.city, data?.details?.state].filter(Boolean).join(', ') || headquarters}</p>
+                <h4 className="text-brand-white/50 text-[10px] font-heading tracking-widest uppercase mb-0.5">Headquarters</h4>
+                <p className="text-brand-white font-mono font-bold text-lg">{[data?.details?.city, data?.details?.state].filter(Boolean).join(', ') || headquarters}</p>
               </div>
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+
+          {/* RIGHT VISUAL (50%) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="w-full flex justify-center items-center relative mt-12 lg:mt-0 lg:-translate-y-8 xl:-translate-y-12"
+          >
+            <img 
+              src={bgImage} 
+              alt="Headquarters Architecture" 
+              className="relative z-10 w-full h-auto max-h-[850px] object-contain scale-100 lg:scale-[1.05] xl:scale-[1.1] origin-center" 
+            />
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
