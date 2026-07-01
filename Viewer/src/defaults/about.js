@@ -9,7 +9,7 @@ export const DEFAULT_ABOUT = {
   hero: {
     sectionLabel: 'ABOUT US',
     sectionTitle: 'Engineering the Future of Defense Technology & Surveillance Systems',
-    overview: 'Dynasas is a technology-driven defence solutions company specializing in command & control systems, surveillance platforms, secure communications, geospatial intelligence, and mission-critical infrastructure. We deliver innovative solutions that enhance operational readiness, strengthen situational awareness, and support strategic decision-making across defence and security domains.',
+    overview: 'Dynasas is a technology-driven defense solutions company specializing in command & control systems, surveillance platforms, secure communications, geospatial intelligence, and mission-critical infrastructure. We deliver innovative solutions that enhance operational readiness, strengthen situational awareness, and support strategic decision-making across defense and security domains.',
     primaryCTA: {
       text: 'Our Mission',
       link: '/#mission'
@@ -24,11 +24,11 @@ export const DEFAULT_ABOUT = {
   // Sections not yet in CMS but hardcoded in UI
   snapshot: {
     heading: 'Defining the Future of Defense Technology',
-    description: 'Dynasas is committed to advancing defence and security through innovation, precision, and operational excellence. By combining cutting-edge technologies with mission-focused expertise, we deliver solutions that enhance situational awareness, strengthen command effectiveness, and support critical decision-making in complex environments.',
+    description: 'Dynasas is committed to advancing defense and security through innovation, precision, and operational excellence. By combining cutting-edge technologies with mission-focused expertise, we deliver solutions that enhance situational awareness, strengthen command effectiveness, and support critical decision-making in complex environments.',
     stats: [
-      { label: 'FOUNDED YEAR', value: '2022', description: 'Established with a commitment to strategic defence superiority', iconName: 'Calendar' },
+      { label: 'FOUNDED YEAR', value: '2022', description: 'Established with a commitment to strategic defense superiority', iconName: 'Calendar' },
       { label: 'Headquarters', value: 'Gurgaon', description: 'Global Operations directed from our primary command center', iconName: 'MapPin' },
-      { label: 'CORE SERVICES', value: '12+', description: 'Comprehensive defence, surveillance, communication and command solutions tailored for mission-critical operations.', iconName: 'Layers' },
+      { label: 'CORE SERVICES', value: '12+', description: 'Comprehensive defense, surveillance, communication and command solutions tailored for mission-critical operations.', iconName: 'Layers' },
       { label: 'Operational Support', value: '24/7', description: 'Dedicated support and response for mission-critical deployments.', iconName: 'Headset' }
     ]
   },
